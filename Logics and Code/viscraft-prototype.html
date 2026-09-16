@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viscraft — Travel Planning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#ffffff;
+    --grey-100:#e9e9e9;
+    --grey-200:#d4d4d4;
+    --grey-300:#b3b3b3;
+    --grey-400:#a3a3a3;
+    --grey-500:#8f8f8f;
+    --grey-700:#5c5c5c;
+    --black:#161616;
+    --radius-pill:999px;
+    --radius-card:22px;
+    --maxw:1200px;
+  }
+  :root{ --page-bg:#ffffff; --page-fg:#141414; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Poppins', system-ui, -apple-system, sans-serif;
+    background:var(--page-bg);
+    color:var(--page-fg);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  ::selection{background:#141414;color:#fff;}
+
+  /* ---------- layout helpers ---------- */
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 40px;}
+  @media (max-width:720px){ .wrap{padding:0 20px;} }
+  .page{display:none;}
+  .page.active{display:block;}
+  img,svg{display:block;}
+
+  /* ---------- header ---------- */
+  header.site-header{
+    background:var(--grey-300);
+    padding:18px 0;
+    position:relative;
+    z-index:40;
+    border-bottom:2px solid rgba(255,255,255,.75);
+  }
+  .header-row{
+    display:flex;align-items:center;gap:24px;
+    max-width:var(--maxw);margin:0 auto;padding:0 40px;
+  }
+  @media (max-width:720px){ .header-row{padding:0 20px;flex-wrap:wrap;gap:12px;} }
+  .logo-btn{
+    width:46px;height:46px;border-radius:12px;border:2.5px solid #ffffff;
+    display:flex;align-items:center;justify-content:center;background:transparent;
+    flex:none;
+  }
+  .search-wrap{
+    position:relative;flex:1;min-width:160px;max-width:520px;
+  }
+  .search-bar{
+    width:100%;display:flex;align-items:center;gap:10px;background:var(--white);
+    border-radius:var(--radius-pill);padding:12px 20px;border:none;
+  }
+  .search-bar input{
+    border:none;outline:none;background:transparent;font-family:inherit;
+    font-weight:600;font-size:15px;color:#8a8a8a;width:100%;
+  }
+  .search-bar input::placeholder{color:#a3a3a3;}
+  .search-dropdown{
+    position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;
+    border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.18);overflow:hidden;
+    display:none;z-index:50;
+  }
+  .search-dropdown.show{display:block;}
+  .search-dropdown button{
+    width:100%;text-align:left;background:none;border:none;padding:12px 20px;
+    font-weight:600;font-size:14.5px;color:#222;border-bottom:1px solid #eee;
+  }
+  .search-dropdown button:last-child{border-bottom:none;}
+  .search-dropdown button:hover{background:#f2f2f2;}
+  .search-dropdown .empty{color:#999;font-weight:500;cursor:default;}
+  .search-dropdown .empty:hover{background:none;}
+  .nav-links{display:flex;align-items:center;gap:34px;flex:none;margin-left:auto;}
+  .nav-links button{
+    background:none;border:none;font-weight:700;font-size:14.5px;letter-spacing:.3px;
+    color:#ffffff;
+  }
+  @media (max-width:640px){
+    .nav-links{gap:16px;width:100%;justify-content:flex-start;order:3;margin-left:0;}
+    .nav-links button{font-size:12.5px;}
+  }
+
+  /* ---------- generic section bands ---------- */
+  .band-grey{background:var(--grey-300);color:#fff;padding:60px 0;}
+  .band-grey-alt{background:var(--grey-400);color:#fff;padding:60px 0;}
+  .band-white{background:#fff;padding:60px 0;}
+  .pill-heading{
+    display:inline-flex;align-items:center;background:#fff;color:#141414;
+    padding:16px 34px;border-radius:var(--radius-pill);font-weight:800;font-size:26px;
+    margin-bottom:26px;
+  }
+  .pill-heading.dark{background:#141414;color:#fff;}
+  .band-text{font-size:16.5px;line-height:1.6;font-weight:600;max-width:1000px;}
+
+  /* ---------- hero ---------- */
+  .hero{padding:70px 0;text-align:center;}
+  .hero h1{font-size:38px;font-weight:800;margin:0;line-height:1.25;}
+  @media (max-width:720px){ .hero h1{font-size:26px;} }
+  .hero.on-grey{background:var(--grey-300);color:#fff;padding:60px 0 90px;text-align:left;}
+  .hero.on-grey h1{font-size:34px;}
+
+  .hero-home{
+    position:relative;background:var(--grey-300);color:#fff;
+    padding:110px 0;text-align:center;overflow:hidden;
+  }
+  .hero-home .watermark{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:560px;max-width:80%;opacity:.25;pointer-events:none;z-index:1;
+  }
+  @media (max-width:720px){ .hero-home{padding:80px 0;} }
+  .hero-home .wrap{position:relative;z-index:2;}
+  .hero-home h1{font-size:38px;font-weight:800;margin:0 auto;line-height:1.3;max-width:820px;}
+  @media (max-width:720px){ .hero-home h1{font-size:26px;} }
+
+  /* ---------- scrollers ---------- */
+  .scroller-row{display:flex;align-items:center;gap:10px;}
+  .scroller-row .scroller{flex:1;min-width:0;}
+  .scroll-btn{
+    flex:none;width:38px;height:38px;border-radius:50%;border:none;
+    background:rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;
+    font-size:19px;line-height:1;color:#141414;
+  }
+  .scroll-btn:hover{background:rgba(0,0,0,.16);}
+  .scroll-btn.on-dark{background:rgba(255,255,255,.28);color:#fff;}
+  .scroll-btn.on-dark:hover{background:rgba(255,255,255,.42);}
+
+  .scroller-outer{position:relative;padding:36px 0;}
+  .scroller{
+    display:flex;gap:20px;overflow-x:auto;
+    padding:6px 4px;scrollbar-width:none;
+  }
+  .scroller::-webkit-scrollbar{display:none;}
+  .scroller.fade-x{
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    -webkit-mask-size:100% 100%; mask-size:100% 100%;
+    -webkit-mask-image:linear-gradient(to right,
+      transparent 0%, rgba(0,0,0,.4) 0.7%, rgba(0,0,0,.8) 1.5%, black 2.5%,
+      black 97.5%, rgba(0,0,0,.8) 98.5%, rgba(0,0,0,.4) 99.3%, transparent 100%);
+    mask-image:linear-gradient(to right,
+      transparent 0%, rgba(0,0,0,.4) 0.7%, rgba(0,0,0,.8) 1.5%, black 2.5%,
+      black 97.5%, rgba(0,0,0,.8) 98.5%, rgba(0,0,0,.4) 99.3%, transparent 100%);
+    -webkit-transform:translateZ(0);
+    transform:translateZ(0);
+    will-change:transform;
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+  }
+
+  .country-card{
+    flex:none;width:230px;background:var(--grey-300);
+    border-radius:var(--radius-card);padding:18px;color:#fff;cursor:pointer;
+    transition:transform .15s ease;
+  }
+  .country-card:hover{transform:translateY(-4px);}
+  .country-card .thumb{
+    background:var(--grey-400);border-radius:16px;height:130px;margin-bottom:16px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .country-card .price{font-weight:700;font-size:14px;margin-bottom:8px;}
+  .country-card .name{font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px;}
+
+  .testimonial-viewport{
+    position:relative;height:340px;overflow:hidden;
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%);
+    mask-image:linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%);
+  }
+  .testimonial-track{
+    display:flex;flex-direction:column;gap:18px;padding:10px 4px;
+    will-change:transform;
+  }
+  .testimonial-card{
+    flex:none;width:100%;background:var(--grey-400);
+    border-radius:var(--radius-pill);padding:22px 30px;display:flex;align-items:center;
+    justify-content:space-between;gap:24px;color:#fff;
+  }
+  .testimonial-card p{margin:0;font-weight:700;font-size:14.5px;line-height:1.5;}
+  .testimonial-name{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14.5px;
+    white-space:nowrap;flex:none;}
+
+  .blog-teaser-card{
+    flex:none;width:210px;height:210px;background:#fff;border-radius:28px;
+    padding:26px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;
+    transition:transform .15s ease;
+  }
+  .blog-teaser-card:hover{transform:translateY(-4px);}
+  .blog-teaser-card h4{margin:0 0 10px;font-size:16.5px;font-weight:800;color:#141414;}
+  .blog-teaser-card p{margin:0;font-size:13.5px;font-weight:600;color:#333;line-height:1.45;}
+
+  .blog-box-section{padding:50px 0 70px;background:#fff;}
+  .blog-box{
+    position:relative;background:var(--grey-400);border-radius:40px;color:#fff;
+    padding:44px 0 66px;box-shadow:0 35px 70px -25px rgba(0,0,0,.4);overflow:hidden;
+  }
+  .blog-box-heading{font-size:36px;font-weight:800;margin:0 0 30px;padding:0 40px;}
+  @media (max-width:720px){ .blog-box-heading{font-size:26px;padding:0 20px;} }
+  .blog-box-fade{
+    position:absolute;left:0;right:0;bottom:0;height:90px;
+    background:linear-gradient(to bottom, rgba(163,163,163,0), var(--grey-400) 88%);
+    pointer-events:none;
+  }
+
+  /* ---------- service pills row (home) ---------- */
+  .service-pill-row{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;padding:10px 0 50px;}
+  .service-pill{
+    background:var(--grey-300);color:#fff;font-weight:800;font-size:15.5px;text-align:center;
+    padding:26px 30px;border-radius:20px;border:none;min-width:200px;
+  }
+  .service-pill:hover{background:var(--grey-400);}
+
+  /* ---------- CTA / consultation form ---------- */
+  .cta-title{text-align:center;font-size:26px;font-weight:800;margin:0 0 30px;}
+  .cta-box{
+    background:var(--black);border-radius:26px;padding:34px;display:grid;
+    grid-template-columns:1.1fr .9fr;gap:30px;color:#fff;
+  }
+  @media (max-width:800px){ .cta-box{grid-template-columns:1fr;} }
+  .cta-heading-pill{
+    display:inline-block;background:#fff;color:#141414;font-weight:800;font-size:17px;
+    padding:14px 26px;border-radius:var(--radius-pill);margin-bottom:20px;
+  }
+  .form-row{display:flex;align-items:center;background:var(--grey-500);border-radius:var(--radius-pill);
+    padding:6px;margin-bottom:12px;gap:10px;}
+  .form-row label{
+    background:#fff;color:#141414;font-weight:800;font-size:13.5px;padding:12px 18px;
+    border-radius:var(--radius-pill);flex:none;min-width:110px;text-align:center;
+  }
+  .form-row input{
+    flex:1;border:none;background:#fff;border-radius:var(--radius-pill);padding:12px 18px;
+    font-family:inherit;font-weight:600;outline:none;font-size:14px;min-width:0;
+  }
+  .field-error{color:#ff9d9d;font-size:12px;font-weight:700;margin:-6px 0 10px 14px;min-height:14px;}
+  .apply-btn{
+    background:#fff;color:#141414;font-weight:800;border:none;border-radius:var(--radius-pill);
+    padding:14px 30px;font-size:14.5px;margin-top:6px;
+  }
+  .apply-btn:hover{background:#e6e6e6;}
+  .form-success{color:#a9ffb0;font-weight:700;font-size:13.5px;margin-top:10px;display:none;}
+  .contact-col{display:flex;flex-direction:column;justify-content:center;gap:20px;}
+  .contact-col .direct-pill{
+    display:inline-block;background:#fff;color:#141414;font-weight:800;font-size:15px;
+    padding:14px 22px;border-radius:var(--radius-pill);width:fit-content;
+  }
+  .contact-line{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14.5px;}
+  .contact-line a{display:flex;align-items:center;gap:10px;}
+  .icon-circle{width:30px;height:30px;border-radius:50%;border:2px solid #fff;flex:none;
+    display:flex;align-items:center;justify-content:center;}
+  .contact-lines-wrap{display:flex;flex-wrap:wrap;gap:18px 26px;}
+
+  /* ---------- footer ---------- */
+  footer.site-footer{background:var(--grey-300);color:#fff;padding:50px 0 30px;}
+  .footer-row{display:flex;gap:60px;flex-wrap:wrap;}
+  .footer-logo{width:96px;height:120px;border:3px solid #fff;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;flex:none;background:none;padding:0;}
+  .footer-col h5{font-weight:800;font-size:14px;letter-spacing:.4px;margin:0 0 14px;}
+  .footer-col button, .footer-col a{display:block;background:none;border:none;color:#fff;
+    font-weight:700;font-size:14px;margin-bottom:10px;padding:0;text-align:left;}
+  .footer-col a.footer-contact-line{display:flex;align-items:center;gap:10px;font-weight:700;
+    font-size:14px;margin-bottom:12px;}
+  .footer-socials{display:flex;gap:16px;}
+  .footer-col .footer-socials a{width:46px;height:46px;border:2px solid #fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;margin-bottom:0;}
+
+  /* ---------- Country page ---------- */
+  .country-hero{background:var(--grey-300);color:#fff;padding:60px 0 44px;position:relative;overflow:hidden;}
+  .country-hero .country-name-pill{
+    display:inline-block;background:#fff;color:#141414;font-weight:800;font-size:32px;
+    padding:16px 40px;border-radius:var(--radius-pill);margin-bottom:26px;
+  }
+  .country-tags{display:flex;gap:16px;flex-wrap:wrap;}
+  .country-tags span{background:#fff;color:#141414;font-weight:800;font-size:14.5px;
+    padding:14px 26px;border-radius:var(--radius-pill);}
+  .country-tabs{
+    position:sticky;top:0;background:#fff;z-index:30;display:flex;gap:16px;padding:22px 0;
+    flex-wrap:wrap;border-bottom:1px solid #eee;
+  }
+  .country-tabs button{
+    background:var(--grey-200);border:none;font-weight:800;font-size:14px;color:#333;
+    padding:14px 26px;border-radius:var(--radius-pill);
+  }
+  .country-tabs button.active{background:#141414;color:#fff;}
+  .stepper-band{background:var(--grey-300);padding:56px 0;}
+  .stepper{display:flex;align-items:center;gap:0;max-width:900px;margin:0 auto;}
+  .stepper .dot{width:16px;height:16px;border-radius:50%;background:#fff;flex:none;}
+  .stepper .line{height:3px;background:#fff;flex:1;}
+  .stepper .ring{width:44px;height:44px;border-radius:50%;border:4px solid #fff;flex:none;}
+  .stepper .dot.active, .stepper .ring.active{background:#141414;border-color:#141414;}
+  .stepper .dot.active{background:#141414;}
+
+  .docs-section{background:var(--grey-300);padding:50px 0 60px;position:relative;}
+  .docs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:660px;}
+  @media (max-width:640px){ .docs-grid{grid-template-columns:repeat(2,1fr);} }
+  .docs-grid span{background:#fff;color:#141414;font-weight:800;font-size:14px;
+    padding:16px 10px;border-radius:var(--radius-pill);text-align:center;}
+  .booking-card{
+    background:#141414;color:#fff;border-radius:24px;padding:26px;width:320px;
+    margin-top:-40px;margin-left:auto;position:relative;z-index:5;
+  }
+  @media (max-width:900px){ .booking-card{margin:30px auto 0;width:100%;max-width:360px;} }
+  .booking-card .pill-title{background:#fff;color:#141414;font-weight:800;text-align:center;
+    padding:12px;border-radius:var(--radius-pill);margin-bottom:16px;font-size:15px;}
+
+  .embassy-bar{display:flex;align-items:center;gap:20px;padding:44px 0;}
+  .embassy-bar .pin{width:52px;height:52px;border-radius:50%;background:var(--grey-200);
+    display:flex;align-items:center;justify-content:center;flex:none;}
+  .embassy-bar .label{background:var(--grey-200);padding:20px 34px;border-radius:18px;
+    font-weight:800;font-size:20px;flex:1;}
+
+  .faq-list{padding:0 0 40px;}
+  .faq-item{border-bottom:1.5px solid #141414;}
+  .faq-q{width:100%;background:none;border:none;display:flex;align-items:center;
+    justify-content:space-between;padding:20px 0;font-weight:800;font-size:16px;text-align:left;}
+  .faq-q .chev{transition:transform .2s ease;flex:none;}
+  .faq-item.open .faq-q .chev{transform:rotate(180deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .faq-item.open .faq-a{max-height:200px;}
+  .faq-a p{margin:0 0 20px;font-weight:500;font-size:14.5px;color:#444;line-height:1.6;}
+
+  /* ---------- Services page ---------- */
+  .service-flow{display:grid;grid-template-columns:1fr 1fr;gap:50px 40px;padding:40px 0 60px;position:relative;}
+  @media (max-width:760px){ .service-flow{grid-template-columns:1fr;} }
+  .flow-card{background:var(--grey-100);border-radius:20px;padding:4px;}
+  .flow-card .pill-title{background:#141414;color:#fff;font-weight:800;font-size:18px;
+    padding:16px 22px;border-radius:16px;margin-bottom:16px;}
+  .flow-card .body{padding:0 18px 22px;font-size:14.5px;font-weight:600;line-height:1.6;color:#222;}
+  .flow-card .body p{margin:0 0 12px;}
+  .flow-col-offset{margin-top:110px;}
+  @media (max-width:760px){ .flow-col-offset{margin-top:0;} }
+
+  /* ---------- Blog page ---------- */
+  .blog-hero{padding:60px 0 30px;text-align:center;}
+  .tag-bar{position:sticky;top:0;background:var(--grey-300);z-index:30;padding:20px 0;}
+  .tag-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .tag-pill{background:#fff;border:none;font-weight:800;font-size:14px;color:#333;
+    padding:13px 24px;border-radius:var(--radius-pill);}
+  .tag-pill.active{background:#141414;color:#fff;}
+  .blog-list{display:flex;flex-direction:column;gap:26px;padding:40px 0;}
+  .blog-card{background:#141414;border-radius:24px;padding:22px;}
+  .blog-card .tag-row{margin-bottom:14px;}
+  .blog-card .tag-row .tag-pill{padding:10px 20px;font-size:13px;pointer-events:none;}
+  .blog-inner{background:var(--grey-300);border-radius:18px;padding:26px 28px;color:#fff;
+    display:flex;justify-content:space-between;gap:20px;cursor:pointer;flex-wrap:wrap;}
+  .blog-inner:hover{background:var(--grey-400);}
+  .blog-inner .txt h3{margin:0 0 4px;font-size:19px;font-weight:800;}
+  .blog-inner .txt h4{margin:0 0 12px;font-size:19px;font-weight:800;}
+  .blog-inner .txt p{margin:0;font-size:14px;font-weight:500;max-width:560px;line-height:1.6;}
+  .blog-author{display:flex;align-items:center;gap:10px;font-weight:800;font-size:13.5px;
+    white-space:nowrap;flex:none;text-align:right;}
+  .blog-empty{padding:40px 0;text-align:center;font-weight:700;color:#888;}
+
+  /* post page */
+  .post-body{max-width:760px;margin:0 auto;padding:50px 0 80px;}
+  .post-body h1{font-size:30px;font-weight:800;margin-bottom:6px;}
+  .post-meta{font-weight:700;color:#777;margin-bottom:26px;font-size:14px;}
+  .post-body p{font-size:16px;line-height:1.75;font-weight:500;margin-bottom:18px;color:#222;}
+  .back-link{display:inline-flex;align-items:center;gap:8px;font-weight:800;margin-bottom:26px;background:none;border:none;font-size:14px;}
+
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!--  TEMPLATE: header + footer are injected by JS into each page  -->
+<!-- ============================================================ -->
+<template id="tpl-header">
+  <header class="site-header">
+    <div class="header-row">
+      <button class="logo-btn" data-action="logo" aria-label="Viscraft home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#ffffff" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3Z" stroke="#ffffff" stroke-width="1.6"/></svg>
+      </button>
+      <div class="search-wrap">
+        <div class="search-bar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9a9a9a" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" class="country-search-input" placeholder="Search country" autocomplete="off">
+        </div>
+        <div class="search-dropdown"></div>
+      </div>
+      <nav class="nav-links">
+        <button data-action="services">SERVICES</button>
+        <button data-action="blog">BLOG</button>
+        <button data-action="contact">CONTACT US</button>
+      </nav>
+    </div>
+  </header>
+</template>
+
+<template id="tpl-footer">
+  <footer class="site-footer" id="site-footer">
+    <div class="wrap footer-row">
+      <button class="footer-logo" data-action="logo" aria-label="Viscraft home" style="cursor:pointer;">
+        <svg width="40" height="52" viewBox="0 0 40 52" fill="none"><rect x="4" y="2" width="32" height="48" rx="4" stroke="#fff" stroke-width="2.4"/><circle cx="20" cy="20" r="8" stroke="#fff" stroke-width="2"/><path d="M20 12c2 2 3 4.6 3 8s-1 6-3 8c-2-2-3-4.6-3-8s1-6 3-8Z" stroke="#fff" stroke-width="1.6"/><path d="M13 38h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </button>
+      <div class="footer-col">
+        <h5>COMPANY</h5>
+        <button data-action="about">About Us</button>
+        <button data-action="services">Services</button>
+        <button data-action="blog">Blog</button>
+      </div>
+      <div class="footer-col">
+        <h5>CONTACT US</h5>
+        <a href="https://wa.me/911234567899" target="_blank" rel="noopener" class="footer-contact-line">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2.5C6.98 2.5 2.9 6.58 2.9 11.6c0 1.77.47 3.42 1.28 4.85L3 21.5l5.2-1.16a9.6 9.6 0 0 0 3.8.79c5.02 0 9.1-4.08 9.1-9.1S17.02 2.5 12 2.5Zm5.1 12.98c-.22.6-1.24 1.16-1.72 1.22-.44.06-1 .08-1.6-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.88-.13-.18-1.05-1.4-1.05-2.66s.66-1.88.9-2.14c.23-.26.51-.32.68-.32.17 0 .34.001.49.008.16.007.37-.06.58.44.22.52.73 1.79.8 1.92.07.13.11.28.02.46-.09.18-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.27-.11.52.15.26.68 1.14 1.47 1.85 1.01.9 1.87 1.19 2.13 1.32.26.13.42.11.57-.07.16-.17.65-.76.82-1.02.17-.26.35-.22.58-.13.23.09 1.48.7 1.73.83.26.13.43.19.49.3.07.12.07.68-.15 1.28Z" fill="#fff"/></svg>
+          +91 1234567899
+        </a>
+        <a href="tel:+911234567899" class="footer-contact-line">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 4h3l2 5-2 2a12 12 0 0 0 6 6l2-2 5 2v3a2 2 0 0 1-2 2C10.5 22 2 13.5 2 6a2 2 0 0 1 2-2Z" stroke="#fff" stroke-width="1.6"/></svg>
+          +91 1234567899
+        </a>
+        <a href="mailto:info@viscraft.co.in" class="footer-contact-line">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#fff" stroke-width="1.6"/><path d="m3 6 9 7 9-7" stroke="#fff" stroke-width="1.6"/></svg>
+          info@viscraft.co.in
+        </a>
+      </div>
+      <div class="footer-col">
+        <h5>FOLLOW US</h5>
+        <div class="footer-socials">
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="#fff" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1" fill="#fff"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 3h-2a5 5 0 0 0-5 5v2H6v4h2v7h4v-7h3l1-4h-4V8a1 1 0 0 1 1-1h3V3Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</template>
+
+<!-- ============================================================ -->
+<!-- HOME PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="home">
+  <div data-slot="header"></div>
+
+  <section class="hero-home">
+    <svg class="watermark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="32" y="18" width="136" height="164" rx="16" stroke="#fff" stroke-width="3"/>
+      <circle cx="100" cy="92" r="34" stroke="#fff" stroke-width="3"/>
+      <path d="M100 58c9 9 14 21.5 14 34s-5 25-14 34c-9-9-14-21.5-14-34s5-25 14-34Z" stroke="#fff" stroke-width="2.2"/>
+      <path d="M66 92h68" stroke="#fff" stroke-width="2.2"/>
+      <path d="M56 150h88" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="wrap"><h1>Travel planning, done with craft - not guesswork</h1></div>
+  </section>
+
+  <section class="wrap" style="padding:36px 0;">
+    <div class="scroller-row">
+      <button class="scroll-btn" data-scroll="home-countries" data-dir="-1" aria-label="Scroll left">‹</button>
+      <div class="scroller fade-x" id="home-countries"></div>
+      <button class="scroll-btn" data-scroll="home-countries" data-dir="1" aria-label="Scroll right">›</button>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="service-pill-row">
+      <button class="service-pill" data-action="services">VISA Documentation</button>
+      <button class="service-pill" data-action="services">Itinerary Planning</button>
+      <button class="service-pill" data-action="services">Destination Bookings</button>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:20px;padding-bottom:20px;">
+    <div class="testimonial-viewport">
+      <div class="testimonial-track" id="home-testimonials"></div>
+    </div>
+  </section>
+
+  <section class="blog-box-section">
+    <div class="wrap">
+      <div class="blog-box">
+        <h2 class="blog-box-heading">The Viscraft Blog</h2>
+        <div class="wrap" style="padding:6px 0;">
+          <div class="scroller-row">
+            <button class="scroll-btn on-dark" data-scroll="home-blog" data-dir="-1" aria-label="Scroll left">‹</button>
+            <div class="scroller fade-x" id="home-blog"></div>
+            <button class="scroll-btn on-dark" data-scroll="home-blog" data-dir="1" aria-label="Scroll right">›</button>
+          </div>
+        </div>
+        <div class="blog-box-fade"></div>
+      </div>
+    </div>
+  </section>
+
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- ABOUT US PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="about">
+  <div data-slot="header"></div>
+
+  <section class="hero"><div class="wrap"><h1>Travel planning, done with craft - not guesswork</h1></div></section>
+
+  <section class="band-grey">
+    <div class="wrap">
+      <span class="pill-heading">Who Are We?</span>
+      <p class="band-text">At Viscraft, we believe travel is more than just reaching a destination — it's about discovering new perspectives, creating lasting memories, and connecting with the world in meaningful ways. Our mission is to craft seamless, personalized travel experiences that turn your dreams into reality, whether you're seeking a relaxing getaway, an adventurous expedition, or a cultural immersion. With a passion for exceptional service and an eye for detail, we handle every aspect of your journey so you can focus on what matters most — making memories that last a lifetime.</p>
+    </div>
+  </section>
+
+  <section class="band-white">
+    <div class="wrap">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:26px;">
+        <span class="pill-heading dark">Our Origin Story</span>
+      </div>
+      <p class="band-text" style="color:#141414;">At Viscraft, we believe travel is more than just reaching a destination — it's about discovering new perspectives, creating lasting memories, and connecting with the world in meaningful ways. Our mission is to craft seamless, personalized travel experiences that turn your dreams into reality, whether you're seeking a relaxing getaway, an adventurous expedition, or a cultural immersion. With a passion for exceptional service and an eye for detail, we handle every aspect of your journey so you can focus on what matters most — making memories that last a lifetime.</p>
+    </div>
+  </section>
+
+  <section class="band-grey">
+    <div class="wrap">
+      <span class="pill-heading">Why Viscraft?</span>
+      <p class="band-text">At Viscraft, we believe travel is more than just reaching a destination — it's about discovering new perspectives, creating lasting memories, and connecting with the world in meaningful ways. Our mission is to craft seamless, personalized travel experiences that turn your dreams into reality, whether you're seeking a relaxing getaway, an adventurous expedition, or a cultural immersion. With a passion for exceptional service and an eye for detail, we handle every aspect of your journey so you can focus on what matters most — making memories that last a lifetime.</p>
+    </div>
+  </section>
+
+  <section class="band-white">
+    <div class="wrap">
+      <h2 class="cta-title">Planning your next trip already?</h2>
+      <div class="cta-box" data-consult-form-wrap>
+        <div>
+          <span class="cta-heading-pill">Book a consultation call with us</span>
+          <form data-consult-form novalidate>
+            <div class="form-row"><label>Name</label><input type="text" name="name" data-field="name"></div>
+            <div class="field-error" data-error="name"></div>
+            <div class="form-row"><label>Contact No.</label><input type="tel" name="contact" data-field="contact"></div>
+            <div class="field-error" data-error="contact"></div>
+            <div class="form-row"><label>Email ID</label><input type="email" name="email" data-field="email"></div>
+            <div class="field-error" data-error="email"></div>
+            <button type="submit" class="apply-btn">Apply Now</button>
+            <div class="form-success">Thanks! We'll call you shortly.</div>
+          </form>
+        </div>
+        <div class="contact-col">
+          <span class="direct-pill">Or reach out to us directly!</span>
+          <div class="contact-lines-wrap">
+            <div class="contact-line"><a href="https://wa.me/911234567899" target="_blank" rel="noopener"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2.5C6.98 2.5 2.9 6.58 2.9 11.6c0 1.77.47 3.42 1.28 4.85L3 21.5l5.2-1.16a9.6 9.6 0 0 0 3.8.79c5.02 0 9.1-4.08 9.1-9.1S17.02 2.5 12 2.5Zm5.1 12.98c-.22.6-1.24 1.16-1.72 1.22-.44.06-1 .08-1.6-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.88-.13-.18-1.05-1.4-1.05-2.66s.66-1.88.9-2.14c.23-.26.51-.32.68-.32.17 0 .34.001.49.008.16.007.37-.06.58.44.22.52.73 1.79.8 1.92.07.13.11.28.02.46-.09.18-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.27-.11.52.15.26.68 1.14 1.47 1.85 1.01.9 1.87 1.19 2.13 1.32.26.13.42.11.57-.07.16-.17.65-.76.82-1.02.17-.26.35-.22.58-.13.23.09 1.48.7 1.73.83.26.13.43.19.49.3.07.12.07.68-.15 1.28Z" fill="#fff"/></svg></span>+91 1234567899</a></div>
+            <div class="contact-line"><a href="tel:+911234567899"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 4h3l2 5-2 2a12 12 0 0 0 6 6l2-2 5 2v3a2 2 0 0 1-2 2C10.5 22 2 13.5 2 6a2 2 0 0 1 2-2Z" stroke="#fff" stroke-width="1.6"/></svg></span>+91 1234567899</a></div>
+          </div>
+          <div class="contact-line"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span>10 A.M. to 8 P.M.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-slot="footer" data-self-refresh="about"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- SERVICES PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="services">
+  <div data-slot="header"></div>
+
+  <section class="hero"><div class="wrap"><h1>Experience end to end travel experience</h1></div></section>
+
+  <section class="wrap">
+    <div class="service-flow">
+      <div class="flow-card">
+        <div class="pill-title">VISA Documentation Assistance</div>
+        <div class="body">
+          <p>We handle your documentation, bulletproof your application &amp; book your appointments</p>
+          <p>Supported for Schengen, USA, UK, Canada, New Zealand, Japan, China, Australia &amp; Ireland</p>
+        </div>
+      </div>
+      <div class="flow-card flow-col-offset">
+        <div class="pill-title">Itinerary Planning</div>
+        <div class="body">
+          <p>Having trouble planning out your journey?</p>
+          <p>Get your day-wise itinerary according to your travel destinations</p>
+        </div>
+      </div>
+      <div class="flow-card">
+        <div class="pill-title">Travel Bookings</div>
+        <div class="body">
+          <p>Leave the hassle of managing your bookings to us!</p>
+          <p>We get your flights &amp; hotels booked too.</p>
+        </div>
+      </div>
+      <div class="flow-card flow-col-offset">
+        <div class="pill-title">D-Day Support</div>
+        <div class="body">
+          <p>Trouble with any of your appointments or bookings?</p>
+          <p>Reach out to us &amp; we'll get things sorted!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-white">
+    <div class="wrap">
+      <h2 class="cta-title">Don't wait up, start your journey with us!</h2>
+      <div class="cta-box">
+        <div>
+          <span class="cta-heading-pill">Book a consultation call with us</span>
+          <form data-consult-form novalidate>
+            <div class="form-row"><label>Name</label><input type="text" name="name" data-field="name"></div>
+            <div class="field-error" data-error="name"></div>
+            <div class="form-row"><label>Contact No.</label><input type="tel" name="contact" data-field="contact"></div>
+            <div class="field-error" data-error="contact"></div>
+            <div class="form-row"><label>Email ID</label><input type="email" name="email" data-field="email"></div>
+            <div class="field-error" data-error="email"></div>
+            <button type="submit" class="apply-btn">Apply Now</button>
+            <div class="form-success">Thanks! We'll call you shortly.</div>
+          </form>
+        </div>
+        <div class="contact-col">
+          <span class="direct-pill">Or reach out to us directly!</span>
+          <div class="contact-lines-wrap">
+            <div class="contact-line"><a href="https://wa.me/911234567899" target="_blank" rel="noopener"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2.5C6.98 2.5 2.9 6.58 2.9 11.6c0 1.77.47 3.42 1.28 4.85L3 21.5l5.2-1.16a9.6 9.6 0 0 0 3.8.79c5.02 0 9.1-4.08 9.1-9.1S17.02 2.5 12 2.5Zm5.1 12.98c-.22.6-1.24 1.16-1.72 1.22-.44.06-1 .08-1.6-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.88-.13-.18-1.05-1.4-1.05-2.66s.66-1.88.9-2.14c.23-.26.51-.32.68-.32.17 0 .34.001.49.008.16.007.37-.06.58.44.22.52.73 1.79.8 1.92.07.13.11.28.02.46-.09.18-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.27-.11.52.15.26.68 1.14 1.47 1.85 1.01.9 1.87 1.19 2.13 1.32.26.13.42.11.57-.07.16-.17.65-.76.82-1.02.17-.26.35-.22.58-.13.23.09 1.48.7 1.73.83.26.13.43.19.49.3.07.12.07.68-.15 1.28Z" fill="#fff"/></svg></span>+91 1234567899</a></div>
+            <div class="contact-line"><a href="tel:+911234567899"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 4h3l2 5-2 2a12 12 0 0 0 6 6l2-2 5 2v3a2 2 0 0 1-2 2C10.5 22 2 13.5 2 6a2 2 0 0 1 2-2Z" stroke="#fff" stroke-width="1.6"/></svg></span>+91 1234567899</a></div>
+          </div>
+          <div class="contact-line"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span>10 A.M. to 8 P.M.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- COUNTRY PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="country">
+  <div data-slot="header"></div>
+
+  <section class="country-hero">
+    <div class="wrap">
+      <span class="country-name-pill" data-country-field="name">Switzerland</span>
+      <div class="country-tags">
+        <span>Starting INR <span data-country-field="price">4,499</span></span>
+        <span>Guaranteed TAT</span>
+        <span>Rush Orders Available</span>
+      </div>
+    </div>
+  </section>
+
+  <nav class="country-tabs wrap">
+    <button data-jump="visa-process" class="active">VISA Process</button>
+    <button data-jump="documents">Documents</button>
+    <button data-jump="embassy">Embassy Details</button>
+    <button data-jump="faqs">Basic FAQs</button>
+  </nav>
+
+  <section class="stepper-band" id="visa-process">
+    <div class="wrap">
+      <div class="stepper">
+        <div class="dot active"></div><div class="line"></div>
+        <div class="dot"></div><div class="line"></div>
+        <div class="dot"></div><div class="line"></div>
+        <div class="dot"></div><div class="line"></div>
+        <div class="ring"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="docs-section" id="documents">
+    <div class="wrap" style="position:relative;">
+      <div class="docs-grid">
+        <span>Document 1</span><span>Document 3</span><span>Document 5</span>
+        <span>Document 2</span><span>Document 4</span><span>Document 6</span>
+      </div>
+      <div class="booking-card">
+        <div class="pill-title">Book A Call</div>
+        <form data-consult-form novalidate>
+          <div class="form-row"><label>Name</label><input type="text" name="name" data-field="name"></div>
+          <div class="field-error" data-error="name"></div>
+          <div class="form-row"><label>Contact No.</label><input type="tel" name="contact" data-field="contact"></div>
+          <div class="field-error" data-error="contact"></div>
+          <div class="form-row"><label>Email ID</label><input type="email" name="email" data-field="email"></div>
+          <div class="field-error" data-error="email"></div>
+          <button type="submit" class="apply-btn" style="width:100%;">Apply Now</button>
+          <div class="form-success">Thanks! We'll call you shortly.</div>
+        </form>
+        <div class="contact-lines-wrap" style="margin-top:16px;">
+          <div class="contact-line"><a href="https://wa.me/911234567899" target="_blank" rel="noopener"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2.5C6.98 2.5 2.9 6.58 2.9 11.6c0 1.77.47 3.42 1.28 4.85L3 21.5l5.2-1.16a9.6 9.6 0 0 0 3.8.79c5.02 0 9.1-4.08 9.1-9.1S17.02 2.5 12 2.5Zm5.1 12.98c-.22.6-1.24 1.16-1.72 1.22-.44.06-1 .08-1.6-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.88-.13-.18-1.05-1.4-1.05-2.66s.66-1.88.9-2.14c.23-.26.51-.32.68-.32.17 0 .34.001.49.008.16.007.37-.06.58.44.22.52.73 1.79.8 1.92.07.13.11.28.02.46-.09.18-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.27-.11.52.15.26.68 1.14 1.47 1.85 1.01.9 1.87 1.19 2.13 1.32.26.13.42.11.57-.07.16-.17.65-.76.82-1.02.17-.26.35-.22.58-.13.23.09 1.48.7 1.73.83.26.13.43.19.49.3.07.12.07.68-.15 1.28Z" fill="#fff"/></svg></span>+91 1234567899</a></div>
+          <div class="contact-line"><a href="tel:+911234567899"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 4h3l2 5-2 2a12 12 0 0 0 6 6l2-2 5 2v3a2 2 0 0 1-2 2C10.5 22 2 13.5 2 6a2 2 0 0 1 2-2Z" stroke="#fff" stroke-width="1.6"/></svg></span>+91 1234567899</a></div>
+          <div class="contact-line"><span class="icon-circle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span>10 A.M. to 8 P.M.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap embassy-bar" id="embassy">
+    <div class="pin"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12Z" stroke="#141414" stroke-width="1.6"/><circle cx="12" cy="9" r="2.4" stroke="#141414" stroke-width="1.6"/></svg></div>
+    <div class="label">Embassy Location</div>
+  </section>
+
+  <section class="wrap faq-list" id="faqs">
+    <div class="faq-item">
+      <button class="faq-q">How long does the VISA process take? <span class="chev">⌄</span></button>
+      <div class="faq-a"><p>Processing time varies by country and season, but our team keeps you updated at every step and always aims for the fastest guaranteed turnaround.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I apply for a Swiss VISA if I have a prior VISA rejection? <span class="chev">⌄</span></button>
+      <div class="faq-a"><p>Yes — we review your rejection letter, address the gaps directly, and rebuild your application to be bulletproof the second time around.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What should I do if I make a mistake on my VISA application? <span class="chev">⌄</span></button>
+      <div class="faq-a"><p>Reach out to us immediately — most corrections can be made before submission, and we'll guide you through the exact fix needed.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What should I do if I make a mistake on my VISA application? <span class="chev">⌄</span></button>
+      <div class="faq-a"><p>Reach out to us immediately — most corrections can be made before submission, and we'll guide you through the exact fix needed.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:36px;padding-bottom:36px;">
+    <div class="testimonial-viewport">
+      <div class="testimonial-track" id="country-testimonials"></div>
+    </div>
+  </section>
+
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- BLOG PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="blog">
+  <div data-slot="header"></div>
+
+  <section class="blog-hero wrap"><h1 style="font-size:32px;font-weight:800;">Check out the Viscraft Blog!</h1></section>
+
+  <nav class="tag-bar">
+    <div class="wrap tag-row" id="blog-tag-row"></div>
+  </nav>
+
+  <section class="wrap">
+    <div class="blog-list" id="blog-list"></div>
+  </section>
+
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- BLOG POST PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="post">
+  <div data-slot="header"></div>
+  <section class="wrap post-body">
+    <button class="back-link" data-action="blog">← Back to Blog</button>
+    <div id="post-content"></div>
+  </section>
+  <div data-slot="footer"></div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- DATA ---------------- */
+  var COUNTRIES = [
+    {slug:"switzerland", name:"Switzerland", price:"4,499"},
+    {slug:"united-kingdom", name:"United Kingdom", price:"3,499"},
+    {slug:"usa", name:"USA", price:"5,499"},
+    {slug:"canada", name:"Canada", price:"4,999"},
+    {slug:"australia", name:"Australia", price:"4,299"},
+    {slug:"japan", name:"Japan", price:"3,999"},
+    {slug:"new-zealand", name:"New Zealand", price:"4,799"},
+    {slug:"ireland", name:"Ireland", price:"4,199"}
+  ];
+
+  var HOME_CARDS = [
+    {slug:"united-kingdom", name:"United Kingdom", price:"3499"},
+    {slug:"united-kingdom", name:"United Kingdom", price:"3499"},
+    {slug:"united-kingdom", name:"United Kingdom", price:"3499"},
+    {slug:"united-kingdom", name:"United Kingdom", price:"3499"},
+    {slug:"switzerland", name:"Switzerland", price:"4499"},
+    {slug:"usa", name:"USA", price:"5499"},
+    {slug:"canada", name:"Canada", price:"4999"},
+    {slug:"australia", name:"Australia", price:"4299"},
+    {slug:"japan", name:"Japan", price:"3999"},
+    {slug:"new-zealand", name:"New Zealand", price:"4799"}
+  ];
+
+  var TESTIMONIALS = [
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"},
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"},
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"},
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"},
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"}
+  ];
+
+  var TAGS = ["Schengen 101","Travel Stories","Places to Visit","Travel Must Knows"];
+
+  var BLOG_POSTS = [
+    {
+      slug:"visa-rejected-dont-lose-hope",
+      title:"VISA Rejected? Don't lose hope yet!",
+      subtitle:"A comprehensive guide for applications.",
+      excerpt:"A comprehensive guide for applications.",
+      tags:["Travel Must Knows"],
+      author:"Akhil Nair", date:"Sep 21, 2026",
+      body:"A visa rejection is not the end of the road. In most cases it comes down to a handful of fixable gaps — missing financial proof, an inconsistent travel history, or a weak cover letter. This guide walks through the most common rejection reasons and exactly how to address each one before you reapply."
+    },
+    {
+      slug:"schengen-visa-101",
+      title:"Schengen VISA 101",
+      subtitle:"What you can do to make your application bulletproof.",
+      excerpt:"The Schengen VISA can be complex when applying for the very first time in a few scenarios. Here's a breakdown of what you can do in case you have any of these issues in your application…",
+      tags:["Schengen 101","Travel Must Knows"],
+      author:"Akhil Nair", date:"Sep 21, 2026",
+      body:"The Schengen VISA can be complex when applying for the very first time in a few scenarios. Here's a breakdown of what you can do in case you have any of these issues in your application: incomplete financial documentation, unclear travel itineraries, or insufficient travel insurance. Each of these has a straightforward fix once you know what the embassy is actually checking for."
+    },
+    {
+      slug:"viscraft-visa-index",
+      title:"Viscraft VISA Index",
+      subtitle:"Know where your passport stands.",
+      excerpt:"Know where your passport stands.",
+      tags:["Places to Visit"],
+      author:"Akhil Nair", date:"Sep 21, 2026",
+      body:"Every passport opens a different set of doors. Our VISA Index breaks down visa-free access, visa-on-arrival options, and processing complexity for over 190 destinations, so you always know exactly where you stand before you plan your next trip."
+    },
+    {
+      slug:"first-time-solo-travel-stories",
+      title:"Solo, Not Alone",
+      subtitle:"Real stories from first-time solo travellers.",
+      excerpt:"Real stories from first-time solo travellers.",
+      tags:["Travel Stories"],
+      author:"Akhil Nair", date:"Sep 14, 2026",
+      body:"We asked five first-time solo travellers what surprised them most about being on the road alone. From the freedom of an unplanned afternoon to the friends made over a shared table, here's what they wish they'd known before they left."
+    },
+    {
+      slug:"underrated-europe-stops",
+      title:"Skip the Crowds",
+      subtitle:"Underrated stops across Europe worth the detour.",
+      excerpt:"Underrated stops across Europe worth the detour.",
+      tags:["Places to Visit"],
+      author:"Akhil Nair", date:"Sep 8, 2026",
+      body:"Beyond the usual capitals, Europe hides a handful of towns that rarely make the itinerary — and that's exactly why they're worth the detour. Here are five places to add to your next Schengen trip."
+    },
+    {
+      slug:"packing-for-a-visa-interview",
+      title:"The Interview Checklist",
+      subtitle:"Exactly what to carry to your VISA appointment.",
+      excerpt:"Exactly what to carry to your VISA appointment.",
+      tags:["Travel Must Knows","Schengen 101"],
+      author:"Akhil Nair", date:"Sep 2, 2026",
+      body:"Walking into a VISA appointment under-prepared is one of the most common (and avoidable) reasons for delay. Here's the exact checklist our team hands every client before their interview."
+    }
+  ];
+
+  var state = { activeTags: new Set(), currentCountrySlug: "switzerland" };
+
+  /* ---------------- HEADER / FOOTER INJECTION ---------------- */
+  var headerTpl = document.getElementById("tpl-header");
+  var footerTpl = document.getElementById("tpl-footer");
+  document.querySelectorAll('[data-slot="header"]').forEach(function(slot){
+    slot.replaceWith(headerTpl.content.cloneNode(true));
+  });
+  document.querySelectorAll('[data-slot="footer"]').forEach(function(slot){
+    var selfRefresh = slot.getAttribute("data-self-refresh");
+    var frag = footerTpl.content.cloneNode(true);
+    if (selfRefresh){
+      var aboutBtn = frag.querySelector('[data-action="about"]');
+      if (aboutBtn){ aboutBtn.setAttribute("data-self-refresh-page", selfRefresh); }
+    }
+    slot.replaceWith(frag);
+  });
+
+  /* ---------------- ROUTING ---------------- */
+  var PAGES = ["home","about","services","country","blog","post"];
+
+  function currentPageName(){
+    var active = document.querySelector(".page.active");
+    return active ? active.getAttribute("data-page") : null;
+  }
+
+  function showPage(name){
+    document.querySelectorAll(".page").forEach(function(p){
+      p.classList.toggle("active", p.getAttribute("data-page") === name);
+    });
+    window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+  }
+
+  function parseHash(){
+    var raw = (location.hash || "#home").replace("#","");
+    var parts = raw.split("/");
+    return {page: parts[0] || "home", param: parts[1] || null};
+  }
+
+  function renderRoute(){
+    var r = parseHash();
+    var page = PAGES.indexOf(r.page) !== -1 ? r.page : "home";
+    if (page === "country"){
+      setCountry(r.param || state.currentCountrySlug);
+    }
+    if (page === "post"){
+      renderPost(r.param);
+    }
+    if (page === "blog"){
+      renderBlogList();
+    }
+    showPage(page);
+    highlightNav(page);
+  }
+
+  function goTo(page, param){
+    var target = "#" + page + (param ? "/" + param : "");
+    if (location.hash === target){
+      renderRoute();
+    } else {
+      location.hash = target;
+    }
+  }
+
+  window.addEventListener("hashchange", renderRoute);
+
+  /* nav-button self-refresh vs navigate */
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    var action = btn.getAttribute("data-action");
+    var cur = currentPageName();
+
+    if (action === "logo"){
+      if (cur === "home"){ location.reload(); } else { goTo("home"); }
+      return;
+    }
+    if (action === "contact"){
+      var footer = document.querySelector('main.page.active [id="site-footer"]') ||
+                   document.querySelector('main.page.active footer.site-footer');
+      if (footer){ footer.scrollIntoView({behavior:"smooth"}); }
+      return;
+    }
+    if (action === "services" || action === "blog"){
+      if (cur === action){ location.reload(); } else { goTo(action); }
+      return;
+    }
+    if (action === "about"){
+      if (btn.hasAttribute("data-self-refresh-page") && cur === "about"){
+        location.reload();
+      } else {
+        goTo("about");
+      }
+      return;
+    }
+  });
+
+  function highlightNav(page){
+    // (kept minimal — header nav has no persistent active state in the wireframes)
+  }
+
+  /* ---------------- SEARCH ---------------- */
+  document.querySelectorAll(".country-search-input").forEach(function(input){
+    var dropdown = input.closest(".search-wrap").querySelector(".search-dropdown");
+
+    function renderResults(){
+      var q = input.value.trim().toLowerCase();
+      if (!q){ dropdown.classList.remove("show"); dropdown.innerHTML = ""; return; }
+      var matches = COUNTRIES.filter(function(c){ return c.name.toLowerCase().indexOf(q) !== -1; });
+      dropdown.innerHTML = "";
+      if (!matches.length){
+        var empty = document.createElement("div");
+        empty.className = "empty";
+        empty.style.padding = "12px 20px";
+        empty.textContent = "No countries found";
+        dropdown.appendChild(empty);
+      } else {
+        matches.forEach(function(c){
+          var b = document.createElement("button");
+          b.type = "button";
+          b.textContent = c.name;
+          b.addEventListener("click", function(){
+            input.value = "";
+            dropdown.classList.remove("show");
+            goTo("country", c.slug);
+          });
+          dropdown.appendChild(b);
+        });
+      }
+      dropdown.classList.add("show");
+    }
+
+    input.addEventListener("input", renderResults);
+    input.addEventListener("focus", renderResults);
+    document.addEventListener("click", function(e){
+      if (!e.target.closest(".search-wrap")){ dropdown.classList.remove("show"); }
+    });
+  });
+
+  /* ---------------- SCROLLERS ---------------- */
+  function scrollTrackBy(track, delta, duration){
+    if (track._scrollAnim){ cancelAnimationFrame(track._scrollAnim); }
+    var single = parseFloat(track.dataset.singleWidth || "0");
+    var start = track.scrollLeft;
+    var target = start + delta;
+    var startTime = null;
+    function frame(ts){
+      if (startTime === null){ startTime = ts; }
+      var t = Math.min((ts - startTime) / duration, 1);
+      var eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      var pos = start + (target - start) * eased;
+      if (single){
+        while (pos >= single){ pos -= single; start -= single; target -= single; }
+        while (pos < 0){ pos += single; start += single; target += single; }
+      }
+      track.scrollLeft = pos;
+      if (t < 1){ track._scrollAnim = requestAnimationFrame(frame); }
+      else { track._scrollAnim = null; }
+    }
+    track._scrollAnim = requestAnimationFrame(frame);
+  }
+
+  document.querySelectorAll("[data-scroll]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var id = btn.getAttribute("data-scroll");
+      var dir = parseInt(btn.getAttribute("data-dir"), 10);
+      var el = document.getElementById(id);
+      if (el){ scrollTrackBy(el, dir * 260, 320); }
+    });
+  });
+
+  function svgGlobe(){
+    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3Z" stroke="#fff" stroke-width="1.6"/></svg>';
+  }
+  function svgAvatar(){
+    return '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="10" r="3.4" stroke="#fff" stroke-width="1.5"/><path d="M5.5 19c1.3-2.6 3.8-4 6.5-4s5.2 1.4 6.5 4" stroke="#fff" stroke-width="1.5"/></svg>';
+  }
+
+  /* -- horizontal infinite loop (country cards, blog cards) -- */
+  function setupInfiniteHLoop(track){
+    if (track.dataset.hloopBound === "1"){ requestAnimationFrame(function(){ primeHLoop(track); }); return; }
+    track.dataset.hloopBound = "1";
+    track.addEventListener("scroll", function(){
+      if (track._scrollAnim){ return; } /* the tween above owns wrapping while it's running */
+      var single = parseFloat(track.dataset.singleWidth || "0");
+      if (!single) return;
+      if (track.scrollLeft >= single - 4){
+        track.scrollLeft -= single;
+      } else if (track.scrollLeft <= 0){
+        track.scrollLeft += single;
+      }
+    });
+    requestAnimationFrame(function(){ primeHLoop(track); });
+  }
+  function primeHLoop(track){
+    var single = track.scrollWidth / 2;
+    track.dataset.singleWidth = single;
+    track.scrollLeft = single / 2;
+  }
+
+  function renderHomeCards(){
+    var track = document.getElementById("home-countries");
+    if (!track) return;
+    track.innerHTML = "";
+    var loopList = HOME_CARDS.concat(HOME_CARDS);
+    loopList.forEach(function(c){
+      var el = document.createElement("div");
+      el.className = "country-card";
+      el.innerHTML = '<div class="thumb"></div><div class="price">Starting INR ' + c.price + '</div><div class="name">' + svgGlobe() + c.name + '</div>';
+      el.addEventListener("click", function(){ goTo("country", c.slug); });
+      track.appendChild(el);
+    });
+    setupInfiniteHLoop(track);
+  }
+
+  function renderHomeBlogTeaser(){
+    var track = document.getElementById("home-blog");
+    if (!track) return;
+    track.innerHTML = "";
+    var loopList = BLOG_POSTS.concat(BLOG_POSTS);
+    loopList.forEach(function(p){
+      var el = document.createElement("div");
+      el.className = "blog-teaser-card";
+      el.innerHTML = "<h4>" + p.title + "</h4><p>" + p.subtitle + "</p>";
+      el.addEventListener("click", function(){ goTo("post", p.slug); });
+      track.appendChild(el);
+    });
+    setupInfiniteHLoop(track);
+  }
+
+  /* -- vertical autoplay loop (testimonials) -- */
+  function renderTestimonials(containerId){
+    var track = document.getElementById(containerId);
+    if (!track) return;
+    track.innerHTML = "";
+    var loopList = TESTIMONIALS.concat(TESTIMONIALS);
+    loopList.forEach(function(t){
+      var el = document.createElement("div");
+      el.className = "testimonial-card";
+      el.innerHTML = '<p>&ldquo;' + t.quote + '&rdquo;</p><div class="testimonial-name">' + svgAvatar() + t.name + '</div>';
+      track.appendChild(el);
+    });
+    setupAutoScroll(track);
+  }
+
+  var AUTOSCROLL_SPEED = 26; /* px per second — a readable pace */
+
+  function setupAutoScroll(track){
+    requestAnimationFrame(function(){
+      var singleHeight = track.scrollHeight / 2;
+      track.dataset.singleHeight = singleHeight;
+      track.dataset.offset = "0";
+      track.style.transform = "translateY(0px)";
+
+      if (track.dataset.autoBound === "1") return;
+      track.dataset.autoBound = "1";
+
+      var viewport = track.parentElement;
+      viewport.addEventListener("mouseenter", function(){ track.dataset.paused = "1"; });
+      viewport.addEventListener("mouseleave", function(){ track.dataset.paused = "0"; });
+
+      var last = null;
+      function step(ts){
+        if (last === null){ last = ts; }
+        var dt = (ts - last) / 1000;
+        last = ts;
+        var single = parseFloat(track.dataset.singleHeight || "0");
+        if (single && track.dataset.paused !== "1"){
+          var offset = parseFloat(track.dataset.offset || "0") + AUTOSCROLL_SPEED * dt;
+          if (offset >= single){ offset -= single; }
+          track.dataset.offset = offset;
+          track.style.transform = "translateY(-" + offset + "px)";
+        }
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  window.addEventListener("resize", function(){
+    ["home-testimonials","country-testimonials"].forEach(function(id){
+      var t = document.getElementById(id);
+      if (t && t.dataset.autoBound === "1"){ t.dataset.singleHeight = t.scrollHeight / 2; }
+    });
+    ["home-countries","home-blog"].forEach(function(id){
+      var t = document.getElementById(id);
+      if (t && t.dataset.hloopBound === "1"){ primeHLoop(t); }
+    });
+  });
+
+  /* ---------------- COUNTRY PAGE ---------------- */
+  function setCountry(slug){
+    var c = COUNTRIES.find(function(x){ return x.slug === slug; }) || COUNTRIES[0];
+    state.currentCountrySlug = c.slug;
+    document.querySelectorAll('[data-country-field="name"]').forEach(function(el){ el.textContent = c.name; });
+    document.querySelectorAll('[data-country-field="price"]').forEach(function(el){ el.textContent = c.price; });
+    renderTestimonials("country-testimonials");
+  }
+
+  (function setupCountryTabsAndStepper(){
+    var countryPage = document.querySelector('main[data-page="country"]');
+    if (!countryPage) return;
+    var tabs = countryPage.querySelectorAll(".country-tabs button");
+    var sections = Array.prototype.map.call(tabs, function(t){ return document.getElementById(t.getAttribute("data-jump")); });
+    var dots = countryPage.querySelectorAll(".stepper .dot, .stepper .ring");
+
+    tabs.forEach(function(tab){
+      tab.addEventListener("click", function(){
+        var target = document.getElementById(tab.getAttribute("data-jump"));
+        if (target){ target.scrollIntoView({behavior:"smooth", block:"start"}); }
+      });
+    });
+
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          var idx = sections.indexOf(entry.target);
+          if (idx === -1) return;
+          tabs.forEach(function(t, i){ t.classList.toggle("active", i === idx); });
+          dots.forEach(function(d, i){ d.classList.toggle("active", i <= idx); });
+        }
+      });
+    }, {rootMargin:"-40% 0px -50% 0px", threshold:0});
+    sections.forEach(function(s){ if (s) io.observe(s); });
+  })();
+
+  /* FAQ accordion */
+  document.addEventListener("click", function(e){
+    var q = e.target.closest(".faq-q");
+    if (!q) return;
+    q.parentElement.classList.toggle("open");
+  });
+
+  /* ---------------- BLOG PAGE ---------------- */
+  function renderTagRow(){
+    var row = document.getElementById("blog-tag-row");
+    if (!row) return;
+    row.innerHTML = "";
+    TAGS.forEach(function(tag){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tag-pill" + (state.activeTags.has(tag) ? " active" : "");
+      b.textContent = tag;
+      b.addEventListener("click", function(){
+        if (state.activeTags.has(tag)){ state.activeTags.delete(tag); } else { state.activeTags.add(tag); }
+        renderTagRow();
+        renderBlogList();
+      });
+      row.appendChild(b);
+    });
+  }
+
+  function renderBlogList(){
+    var list = document.getElementById("blog-list");
+    if (!list) return;
+    var filtered = BLOG_POSTS.filter(function(p){
+      if (state.activeTags.size === 0) return true;
+      return p.tags.some(function(t){ return state.activeTags.has(t); });
+    });
+    list.innerHTML = "";
+    if (!filtered.length){
+      var empty = document.createElement("div");
+      empty.className = "blog-empty";
+      empty.textContent = "No posts match the selected tags.";
+      list.appendChild(empty);
+      return;
+    }
+    filtered.forEach(function(p){
+      var card = document.createElement("div");
+      card.className = "blog-card";
+      var tagsHtml = p.tags.map(function(t){ return '<span class="tag-pill">' + t + '</span>'; }).join("");
+      card.innerHTML =
+        '<div class="tag-row">' + tagsHtml + '</div>' +
+        '<div class="blog-inner">' +
+          '<div class="txt"><h3>' + p.title + '</h3><h4>' + p.subtitle + '</h4><p>' + p.excerpt + '</p></div>' +
+          '<div class="blog-author">' + svgAvatar() + '<span>' + p.author + '<br>' + p.date + '</span></div>' +
+        '</div>';
+      card.querySelector(".blog-inner").addEventListener("click", function(){ goTo("post", p.slug); });
+      list.appendChild(card);
+    });
+  }
+
+  function renderPost(slug){
+    var post = BLOG_POSTS.find(function(p){ return p.slug === slug; }) || BLOG_POSTS[0];
+    var el = document.getElementById("post-content");
+    if (!el) return;
+    el.innerHTML =
+      '<h1>' + post.title + '</h1>' +
+      '<div class="post-meta">' + post.author + ' · ' + post.date + '</div>' +
+      '<p>' + post.body + '</p>';
+  }
+
+  /* ---------------- FORM VALIDATION ---------------- */
+  var RX_NAME = /^[A-Za-z\s]+$/;
+  var RX_PHONE = /^[0-9]{7,15}$/;
+  var RX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  document.querySelectorAll("[data-consult-form]").forEach(function(form){
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var name = form.querySelector('[data-field="name"]').value.trim();
+      var contact = form.querySelector('[data-field="contact"]').value.trim();
+      var email = form.querySelector('[data-field="email"]').value.trim();
+      var errName = form.querySelector('[data-error="name"]');
+      var errContact = form.querySelector('[data-error="contact"]');
+      var errEmail = form.querySelector('[data-error="email"]');
+      var ok = true;
+
+      if (!name){ errName.textContent = "Name is required."; ok = false; }
+      else if (!RX_NAME.test(name)){ errName.textContent = "No special characters or numbers allowed."; ok = false; }
+      else { errName.textContent = ""; }
+
+      if (!contact){ errContact.textContent = "Contact number is required."; ok = false; }
+      else if (!RX_PHONE.test(contact)){ errContact.textContent = "Enter a valid contact number."; ok = false; }
+      else { errContact.textContent = ""; }
+
+      if (!email){ errEmail.textContent = "Email is required."; ok = false; }
+      else if (!RX_EMAIL.test(email)){ errEmail.textContent = "Enter a valid email address."; ok = false; }
+      else { errEmail.textContent = ""; }
+
+      var successEl = form.querySelector(".form-success");
+      if (ok){
+        successEl.style.display = "block";
+        form.reset();
+        setTimeout(function(){ successEl.style.display = "none"; }, 4000);
+      } else {
+        successEl.style.display = "none";
+      }
+    });
+  });
+
+  /* ---------------- INIT ---------------- */
+  renderHomeCards();
+  renderTestimonials("home-testimonials");
+  renderHomeBlogTeaser();
+  renderTagRow();
+  renderBlogList();
+  renderRoute();
+
+})();
+</script>
+</body>
+</html>
