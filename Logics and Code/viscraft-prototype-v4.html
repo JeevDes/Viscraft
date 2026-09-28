@@ -1,0 +1,2732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viscraft — Travel Planning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#ffffff;
+    --grey-100:#e9e9e9;
+    --grey-200:#d4d4d4;
+    --grey-300:#b3b3b3;
+    --grey-400:#a3a3a3;
+    --grey-500:#8f8f8f;
+    --grey-700:#5c5c5c;
+    --black:#161616;
+    --radius-pill:999px;
+    --radius-card:22px;
+    --maxw:1200px;
+  }
+  :root{ --page-bg:#ffffff; --page-fg:#141414; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Poppins', system-ui, -apple-system, sans-serif;
+    background:var(--page-bg);
+    color:var(--page-fg);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;cursor:pointer;color:inherit;}
+  ::selection{background:#141414;color:#fff;}
+
+  /* ---------- layout helpers ---------- */
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 40px;}
+  @media (max-width:720px){ .wrap{padding:0 20px;} }
+  .page{display:none;}
+  .page.active{display:block;}
+  img,svg{display:block;}
+
+  /* ---------- header ---------- */
+  header.site-header{
+    background:var(--grey-300);
+    padding:18px 0;
+    position:relative;
+    z-index:40;
+    border-bottom:2px solid rgba(255,255,255,.75);
+  }
+  .header-row{
+    display:flex;align-items:center;gap:24px;
+    max-width:var(--maxw);margin:0 auto;padding:0 40px;
+  }
+  @media (max-width:720px){ .header-row{padding:0 20px;flex-wrap:wrap;gap:12px;} }
+  .logo-btn{
+    width:46px;height:46px;border-radius:12px;border:2.5px solid #ffffff;
+    display:flex;align-items:center;justify-content:center;background:transparent;
+    flex:none;
+  }
+  .search-wrap{
+    position:relative;flex:1;min-width:160px;max-width:520px;
+  }
+  .search-bar{
+    width:100%;display:flex;align-items:center;gap:10px;background:var(--white);
+    border-radius:var(--radius-pill);padding:12px 20px;border:none;
+  }
+  .search-bar input{
+    border:none;outline:none;background:transparent;font-family:inherit;
+    font-weight:600;font-size:15px;color:#141414;caret-color:#141414;width:100%;
+  }
+  .search-bar input::placeholder{color:#a3a3a3;}
+  /* the phrase is long — let it shrink rather than get clipped once the
+     hamburger takes its share of the header */
+  @media (max-width:720px){ .search-bar{padding:12px 16px;} .search-bar input{font-size:13.5px;} }
+  @media (max-width:420px){ .search-bar{padding:11px 13px;gap:7px;} .search-bar input{font-size:12.5px;} }
+  .search-dropdown{
+    position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;
+    border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.18);overflow:hidden;
+    display:none;z-index:50;
+  }
+  .search-dropdown.show{display:block;}
+  .search-dropdown button{
+    width:100%;text-align:left;background:none;border:none;padding:12px 20px;
+    font-weight:600;font-size:14.5px;color:#222;border-bottom:1px solid #eee;
+  }
+  .search-dropdown button:last-child{border-bottom:none;}
+  .search-dropdown button:hover,
+  .search-dropdown button.active{background:#f2f2f2;}
+  /* keyboard focus needs a visible marker of its own, since :hover may
+     also be lit on whichever option the pointer happens to rest over */
+  .search-dropdown button.active{box-shadow:inset 3px 0 0 #141414;}
+  .search-dropdown .empty{color:#999;font-weight:500;cursor:default;}
+  .search-dropdown .empty:hover{background:none;}
+  .nav-links{display:flex;align-items:center;gap:34px;flex:none;margin-left:auto;}
+  .nav-links button{
+    background:none;border:none;font-weight:700;font-size:14.5px;letter-spacing:.3px;
+    color:#ffffff;
+  }
+  @media (max-width:640px){
+    .nav-links{gap:16px;width:100%;justify-content:flex-start;order:3;margin-left:0;}
+    .nav-links button{font-size:12.5px;}
+  }
+
+  /* ---------- generic section bands ---------- */
+  .band-grey{background:var(--grey-300);color:#fff;padding:60px 0;}
+  .band-grey-alt{background:var(--grey-400);color:#fff;padding:60px 0;}
+  .band-white{background:#fff;padding:60px 0;}
+  .pill-heading{
+    display:inline-flex;align-items:center;background:#fff;color:#141414;
+    padding:16px 34px;border-radius:var(--radius-pill);font-weight:800;font-size:26px;
+    margin-bottom:26px;
+  }
+  .pill-heading.dark{background:#141414;color:#fff;}
+  .band-text{font-size:16.5px;line-height:1.6;font-weight:600;max-width:1000px;}
+
+  /* ---------- hero ---------- */
+  .hero{padding:70px 0;text-align:center;}
+  .hero h1{font-size:38px;font-weight:800;margin:0;line-height:1.25;}
+  @media (max-width:720px){ .hero h1{font-size:26px;} }
+  .hero.on-grey{background:var(--grey-300);color:#fff;padding:60px 0 90px;text-align:left;}
+  .hero.on-grey h1{font-size:34px;}
+
+  .hero-home{
+    position:relative;background:var(--grey-300);color:#fff;
+    padding:110px 0;text-align:center;overflow:hidden;
+  }
+  .hero-home .watermark{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:560px;max-width:80%;opacity:.25;pointer-events:none;z-index:1;
+  }
+  @media (max-width:720px){ .hero-home{padding:80px 0;} }
+  .hero-home .wrap{position:relative;z-index:2;}
+  .hero-home h1{font-size:38px;font-weight:800;margin:0 auto;line-height:1.3;max-width:820px;}
+  @media (max-width:720px){ .hero-home h1{font-size:26px;} }
+
+  /* ---------- scrollers ---------- */
+  .scroller-row{display:flex;align-items:center;gap:18px;}
+  .scroller-row .scroller-viewport{flex:1;min-width:0;}
+  .scroller-viewport{position:relative;overflow:hidden;}
+  .scroll-btn{
+    flex:none;width:38px;height:38px;border-radius:50%;border:none;
+    background:rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;
+    font-size:19px;line-height:1;color:#141414;
+  }
+  .scroll-btn:hover{background:rgba(0,0,0,.16);}
+  .scroll-btn.on-dark{background:rgba(255,255,255,.28);color:#fff;}
+  .scroll-btn.on-dark:hover{background:rgba(255,255,255,.42);}
+
+  .scroller-outer{position:relative;padding:36px 0;}
+  .scroller{
+    display:flex;gap:20px;overflow-x:auto;width:100%;
+    padding:6px 0;scrollbar-width:none;
+    -webkit-transform:translateZ(0);
+    transform:translateZ(0);
+    will-change:transform;
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+  }
+  .scroller::-webkit-scrollbar{display:none;}
+
+  .country-card{
+    flex:0 0 calc((100% - 60px) / 4);background:var(--grey-300);
+    border-radius:var(--radius-card);padding:18px;color:#fff;cursor:pointer;
+    transition:transform .15s ease;
+  }
+  @media (max-width:900px){ .country-card{flex:0 0 calc((100% - 20px) / 2);} }
+  @media (max-width:560px){ .country-card{flex:0 0 100%;} }
+  .country-card:hover{transform:translateY(-4px);}
+  .country-card .thumb{
+    background:var(--grey-400);border-radius:16px;height:130px;margin-bottom:16px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .country-card .price{font-weight:700;font-size:14px;margin-bottom:8px;}
+  .country-card .name{font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px;}
+
+  .testimonial-viewport{
+    position:relative;height:340px;overflow:hidden;
+  }
+  .testimonial-track{
+    display:flex;flex-direction:column;gap:18px;padding:10px 4px;
+    will-change:transform;
+  }
+  .testimonial-card{
+    flex:none;width:100%;background:var(--grey-400);
+    border-radius:var(--radius-pill);padding:22px 30px;display:flex;align-items:center;
+    justify-content:space-between;gap:24px;color:#fff;
+  }
+  .testimonial-card p{margin:0;font-weight:700;font-size:14.5px;line-height:1.5;}
+  .testimonial-name{display:flex;align-items:center;gap:10px;font-weight:800;font-size:14.5px;
+    white-space:nowrap;flex:none;}
+
+  .blog-teaser-card{
+    flex:0 0 calc((100% - 60px) / 4);height:210px;background:#fff;border-radius:28px;
+    padding:26px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;
+    transition:transform .15s ease;
+  }
+  @media (max-width:900px){ .blog-teaser-card{flex:0 0 calc((100% - 20px) / 2);} }
+  @media (max-width:560px){ .blog-teaser-card{flex:0 0 100%;} }
+  .blog-teaser-card:hover{transform:translateY(-4px);}
+  .blog-teaser-card h4{margin:0 0 10px;font-size:16.5px;font-weight:800;color:#141414;}
+  .blog-teaser-card p{margin:0;font-size:13.5px;font-weight:600;color:#333;line-height:1.45;}
+
+  .blog-box-section{padding:50px 0 70px;background:#fff;}
+  .blog-box-section .wrap{max-width:1400px;}
+  @media (max-width:1460px){ .blog-box-section .wrap{max-width:100%;} }
+  .blog-box{
+    position:relative;background:var(--grey-400);border-radius:40px;color:#fff;
+    padding:44px 0 66px;box-shadow:0 35px 70px -25px rgba(0,0,0,.4);overflow:hidden;
+  }
+  .blog-box-heading{font-size:36px;font-weight:800;margin:0 0 30px;padding:0 40px;}
+  @media (max-width:720px){ .blog-box-heading{font-size:26px;padding:0 20px;} }
+  .blog-box-fade{
+    position:absolute;left:0;right:0;bottom:0;height:90px;
+    background:linear-gradient(to bottom, rgba(163,163,163,0), var(--grey-400) 88%);
+    pointer-events:none;
+  }
+
+  /* ---------- service pills row (home) ---------- */
+  .service-pill-row{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;padding:10px 0 50px;}
+  .service-pill{
+    background:var(--grey-300);color:#fff;font-weight:800;font-size:15.5px;text-align:center;
+    padding:26px 30px;border-radius:20px;border:none;min-width:200px;
+  }
+  .service-pill:hover{background:var(--grey-400);}
+
+  /* ---------- CTA / consultation form ---------- */
+  .cta-title{text-align:center;font-size:26px;font-weight:800;margin:0 0 30px;}
+  .cta-box{
+    background:rgba(20,20,20,.88);border-radius:26px;padding:34px;display:grid;
+    grid-template-columns:1fr 1fr;gap:20px 34px;color:#fff;align-items:stretch;
+  }
+  /* grid columns default to a min-content floor, which stops the form
+     shrinking on small screens — let the columns actually narrow */
+  .cta-box > *{min-width:0;}
+  @media (max-width:900px){ .cta-box{gap:20px;padding:24px;} }
+  @media (max-width:620px){
+    .cta-box{grid-template-columns:1fr;}
+    .cta-heading-pill{order:1;}
+    .cta-box > form{order:2;}
+    .cta-box .direct-pill{order:3;}
+    .cta-box .contact-col{order:4;padding-bottom:0;}
+  }
+  /* both header pills sit in the same grid row and stretch to match, so one
+     wrapping to two lines no longer makes it taller than the other */
+  .cta-heading-pill, .cta-box .direct-pill{
+    display:flex;align-items:center;justify-content:center;
+    width:100%;height:100%;min-height:54px;background:#fff;color:#141414;
+    font-weight:800;font-size:17px;padding:14px 26px;
+    border-radius:var(--radius-pill);text-align:center;box-sizing:border-box;margin:0;
+  }
+  .form-row{display:flex;align-items:center;background:var(--grey-500);border-radius:var(--radius-pill);
+    padding:6px;margin-bottom:12px;gap:10px;}
+  .form-row label{
+    background:#fff;color:#141414;font-weight:800;font-size:13.5px;padding:12px 10px;
+    border-radius:var(--radius-pill);flex:none;width:126px;text-align:center;
+    white-space:nowrap;
+  }
+  .form-row input{
+    flex:1;border:none;background:#fff;border-radius:var(--radius-pill);padding:12px 18px;
+    font-family:inherit;font-weight:600;outline:none;font-size:14px;min-width:0;
+    color:#141414;caret-color:#141414;
+  }
+  .form-row input:focus{box-shadow:0 0 0 2px rgba(20,20,20,.45);}
+  .form-row input.invalid{box-shadow:0 0 0 2px #e5484d;background:#fff4f4;}
+  .form-row input.invalid:focus{box-shadow:0 0 0 2px #e5484d;}
+  /* Destination picker — a text field that filters the list as you type, so a
+     37-item list never has to be scrolled. Same interaction as the header
+     search: type to narrow, arrows to move, Enter to choose. */
+  .dest-field{position:relative;flex:1;min-width:0;display:flex;}
+  .dest-field input{
+    flex:1;border:none;background:#fff;border-radius:var(--radius-pill);
+    padding:12px 38px 12px 18px;font-family:inherit;font-weight:600;outline:none;
+    font-size:14px;min-width:0;color:#141414;caret-color:#141414;
+  }
+  .dest-field input::placeholder{color:#8f8f8f;font-weight:600;}
+  .dest-field input:focus{box-shadow:0 0 0 2px rgba(20,20,20,.45);}
+  .dest-field input.invalid{box-shadow:0 0 0 2px #e5484d;background:#fff4f4;}
+  .dest-field input.invalid:focus{box-shadow:0 0 0 2px #e5484d;}
+  .dest-toggle{
+    position:absolute;right:0;top:0;bottom:0;width:36px;border:none;background:none;
+    display:flex;align-items:center;justify-content:center;padding:0;border-radius:0 999px 999px 0;
+  }
+  .dest-toggle svg{transition:transform .18s ease;}
+  .dest-field.open .dest-toggle svg{transform:rotate(180deg);}
+
+  .dest-dropdown{
+    position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;
+    border-radius:16px;box-shadow:0 14px 34px rgba(0,0,0,.34);overflow:auto;
+    max-height:236px;display:none;z-index:80;
+    /* momentum scrolling on iOS when the list is long */
+    -webkit-overflow-scrolling:touch;
+  }
+  .dest-dropdown.show{display:block;}
+  .dest-dropdown button{
+    width:100%;text-align:left;background:none;border:none;padding:11px 18px;
+    font-family:inherit;font-weight:600;font-size:14px;color:#222;
+    border-bottom:1px solid #eee;display:block;
+  }
+  .dest-dropdown button:last-child{border-bottom:none;}
+  .dest-dropdown button:hover,
+  .dest-dropdown button.active{background:#f2f2f2;}
+  .dest-dropdown button.active{box-shadow:inset 3px 0 0 #141414;}
+  .dest-dropdown button b{font-weight:800;}
+  .dest-dropdown .empty{padding:12px 18px;color:#999;font-weight:600;font-size:14px;}
+
+  /* WhatsApp opt-in — a real checkbox, visually hidden behind a drawn box so
+     it keeps keyboard focus and form semantics */
+  .wa-optin{display:flex;align-items:center;gap:11px;cursor:pointer;
+    margin:2px 0 4px;padding:6px 2px;font-weight:600;font-size:13.5px;line-height:1.4;}
+  .wa-optin input{position:absolute;opacity:0;width:0;height:0;}
+  .wa-box{flex:none;width:19px;height:19px;border-radius:5px;background:#fff;
+    border:2px solid #fff;position:relative;transition:.15s;}
+  .wa-box::after{
+    content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;
+    border:solid #141414;border-width:0 2.5px 2.5px 0;transform:rotate(45deg);
+    opacity:0;transition:opacity .15s;
+  }
+  .wa-optin input:checked + .wa-box{background:#fff;}
+  .wa-optin input:checked + .wa-box::after{opacity:1;}
+  .wa-optin input:focus-visible + .wa-box{box-shadow:0 0 0 3px rgba(255,255,255,.45);}
+  .wa-text{color:#fff;}
+  .field-error{color:#ff9d9d;font-size:12px;font-weight:700;margin:-6px 0 10px 14px;min-height:14px;}
+  .apply-btn{
+    background:#fff;color:#141414;font-weight:800;border:none;border-radius:var(--radius-pill);
+    padding:14px 30px;font-size:14.5px;margin-top:6px;
+  }
+  .apply-btn:hover{background:#e6e6e6;}
+  .form-success{color:#a9ffb0;font-weight:700;font-size:13.5px;margin-top:10px;display:none;}
+  /* summary banner shown at the top of the form when submit is blocked */
+  .form-alert{
+    display:none;background:#e5484d;color:#fff;font-weight:700;font-size:13px;
+    border-radius:12px;padding:11px 16px;margin-bottom:14px;line-height:1.4;
+  }
+  .form-alert.show{display:block;}
+  /* DESKTOP: the two numbers sit side by side with the hours centred beneath,
+     as drawn. The column stretches to the form's full height and the bottom
+     padding discounts the form's tail (last error slot + Apply Now) so the
+     midpoints line up against the Name->Email block. */
+  .contact-col{display:flex;flex-direction:column;gap:26px;justify-content:center;
+    padding-bottom:85px;}
+  .contact-col .contact-lines-wrap{display:flex;justify-content:space-around;
+    gap:18px 26px;flex-wrap:wrap;}
+  .contact-col > .contact-line{justify-content:center;}
+  .contact-lines-wrap{display:flex;flex-wrap:wrap;gap:18px 26px;}
+  .contact-line{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14.5px;}
+  .contact-line a{display:flex;align-items:center;gap:10px;}
+  .icon-circle{width:30px;height:30px;border-radius:50%;border:2px solid #fff;flex:none;
+    display:flex;align-items:center;justify-content:center;}
+
+
+  /* ---------- footer ---------- */
+  footer.site-footer{background:var(--grey-300);color:#fff;padding:50px 0 30px;}
+  .footer-row{display:flex;gap:60px;flex-wrap:wrap;}
+  /* trust strip — a hairline rule then one centred line, full footer width */
+  .trust-strip{margin-top:38px;padding-top:22px;border-top:1px solid rgba(255,255,255,.28);}
+  .trust-strip p{margin:0;text-align:center;font-weight:700;font-size:15px;
+    letter-spacing:.2px;color:rgba(255,255,255,.92);}
+  /* same mark as the header, a touch larger */
+  .footer-logo{width:56px;height:56px;border:2.5px solid #fff;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;flex:none;background:none;padding:0;}
+  .footer-col h5{font-weight:800;font-size:14px;letter-spacing:.4px;margin:0 0 14px;}
+  .footer-col button, .footer-col a{display:block;background:none;border:none;color:#fff;
+    font-weight:700;font-size:14px;margin-bottom:10px;padding:0;text-align:left;}
+  .footer-col a.footer-contact-line{display:flex;align-items:center;gap:10px;font-weight:700;
+    font-size:14px;margin-bottom:12px;}
+  .footer-socials{display:flex;gap:16px;}
+  .footer-col .footer-socials a{width:46px;height:46px;border:2px solid #fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;margin-bottom:0;}
+
+  /* ---------- Country page ---------- */
+  .country-hero{background:var(--grey-300);color:#fff;padding:60px 0 80px;position:relative;overflow:hidden;}
+  .country-hero .watermark{
+    position:absolute;top:50%;right:6%;transform:translateY(-50%);
+    width:620px;max-width:60%;opacity:.22;pointer-events:none;z-index:1;
+  }
+  /* hero content sits flush to the left edge of the page, as drawn */
+  .country-hero .hero-left{position:relative;z-index:2;padding:0 0 0 32px;max-width:none;}
+  .country-hero .country-name-pill{
+    display:inline-block;background:#fff;color:#141414;font-weight:800;font-size:32px;
+    padding:16px 40px;border-radius:var(--radius-pill);margin-bottom:40px;
+  }
+  .country-tags{display:flex;gap:20px;flex-wrap:wrap;max-width:740px;}
+  .country-tags span{background:#fff;color:#141414;font-weight:800;font-size:21px;
+    padding:16px 34px;border-radius:var(--radius-pill);}
+  .country-tabs-band{position:sticky;top:0;z-index:30;background:#fff;padding:22px 0;}
+  /* keeps any non-JS jump (e.g. a #hash link) clear of the sticky tab bar */
+  #visa-process, #documents, #where-to-apply, #faqs{scroll-margin-top:120px;}
+  .country-tabs{
+    display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;
+  }
+  .country-tabs button{
+    background:var(--grey-200);border:none;font-weight:800;font-size:17px;color:#4a4a4a;
+    padding:18px 26px;border-radius:var(--radius-pill);flex:1;min-width:170px;
+  }
+  .country-tabs button.active{background:var(--grey-300);color:#fff;}
+
+  /* infographic: heavier strokes, and 50% more room for copy to come */
+  /* extra room below the infographic for copy to sit under it later */
+  .stepper-band{background:var(--grey-300);padding:70px 0 80px;}
+
+  /* VISA process: five stages on one rail. The rail is drawn behind the marks
+     with a pseudo-element rather than as separate line divs, so it cannot fall
+     out of step with them when the labels wrap to different heights. */
+  .process-flow{
+    list-style:none;margin:0 auto;padding:0;max-width:1060px;
+    display:grid;grid-template-columns:repeat(5,1fr);gap:0 14px;position:relative;
+  }
+  .process-flow::before{
+    content:"";position:absolute;top:33px;left:10%;right:10%;height:5px;
+    background:rgba(255,255,255,.85);border-radius:3px;
+  }
+  .process-step{position:relative;text-align:center;padding:0 4px;}
+  .step-mark{
+    width:66px;height:66px;border-radius:50%;background:#fff;margin:0 auto 18px;
+    display:flex;align-items:center;justify-content:center;position:relative;
+    box-shadow:0 6px 16px rgba(0,0,0,.18);
+  }
+  .step-mark svg{width:30px;height:30px;}
+  .step-num{
+    position:absolute;top:-6px;right:-6px;width:25px;height:25px;border-radius:50%;
+    background:#141414;color:#fff;font-size:12.5px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .process-step h3{margin:0 0 7px;font-size:15.5px;font-weight:800;color:#fff;line-height:1.3;}
+  .process-step p{margin:0;font-size:13px;font-weight:600;color:rgba(255,255,255,.92);line-height:1.5;}
+
+  .process-cta{display:flex;justify-content:center;margin-top:46px;}
+  .process-detail-link{
+    display:inline-flex;align-items:center;gap:9px;background:#141414;color:#fff;
+    border:none;font-weight:800;font-size:14.5px;padding:15px 28px;
+    border-radius:var(--radius-pill);text-align:left;
+  }
+  .process-detail-link:hover{background:#2c2c2c;}
+  .process-detail-link svg{flex:none;}
+  /* one flex child for the words: an inline <span> inside a `gap` flex parent
+     would otherwise be spaced away from the text around it */
+  .btn-label{display:inline;}
+
+  @media (max-width:900px){
+    .process-flow{grid-template-columns:repeat(5,1fr);gap:0 8px;}
+    .step-mark{width:54px;height:54px;margin-bottom:14px;}
+    .step-mark svg{width:24px;height:24px;}
+    .process-flow::before{top:27px;}
+    .process-step h3{font-size:13px;}
+    .process-step p{font-size:11.5px;}
+  }
+  /* stacked: the rail turns into a rail down the left of the stages */
+  @media (max-width:680px){
+    .process-flow{grid-template-columns:1fr;gap:26px;}
+    .process-flow::before{
+      top:20px;bottom:20px;left:27px;right:auto;width:5px;height:auto;
+    }
+    .process-step{display:grid;grid-template-columns:54px 1fr;gap:0 18px;text-align:left;
+      align-items:start;padding:0;}
+    .step-mark{margin:0;grid-row:span 2;}
+    .process-step h3{align-self:center;margin-bottom:4px;}
+    .process-step p{grid-column:2;}
+    .process-cta{margin-top:32px;}
+    .process-detail-link{width:100%;justify-content:center;font-size:13.5px;padding:14px 18px;}
+  }
+
+  /* ---------- per-country process breakdown page ---------- */
+  .process-page-head{background:var(--grey-300);padding:44px 0 40px;}
+  .process-page-head .back-link{color:#fff;margin-bottom:22px;}
+  .process-page-head h1{margin:0;font-size:38px;font-weight:800;color:#fff;line-height:1.18;}
+  .process-page-head .sub{margin:14px 0 0;color:rgba(255,255,255,.9);font-weight:500;
+    font-size:15px;max-width:660px;line-height:1.6;}
+  .stage-list{padding-top:40px;padding-bottom:20px;display:flex;flex-direction:column;gap:22px;}
+  .stage-card{background:var(--grey-500);border-radius:22px;padding:26px 28px 28px;}
+  .stage-card .stage-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;}
+  .stage-card .pill-title{display:inline-block;background:#141414;color:#fff;font-weight:800;
+    font-size:18px;padding:12px 24px;border-radius:var(--radius-pill);margin:0;}
+  .stage-card .stage-when{background:#fff;color:#141414;font-weight:800;font-size:12.5px;
+    padding:8px 16px;border-radius:var(--radius-pill);}
+  .stage-card .stage-body{margin:0 0 18px;font-weight:600;font-size:14px;color:#2a2a2a;line-height:1.65;}
+  .stage-split{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .stage-split section{background:#fff;border-radius:14px;padding:16px 18px;}
+  .stage-split h4{margin:0 0 9px;font-size:12px;font-weight:800;letter-spacing:.5px;
+    text-transform:uppercase;color:#6a6a6a;}
+  .stage-split ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
+  .stage-split li{font-weight:700;font-size:13.5px;color:#141414;line-height:1.45;
+    padding-left:16px;position:relative;}
+  .stage-split li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;
+    border-radius:50%;background:#141414;}
+  .process-note{padding-top:6px;padding-bottom:54px;}
+  .process-note p{margin:0;font-weight:600;font-size:13.5px;color:#666;line-height:1.65;}
+  @media (max-width:820px){
+    .process-page-head h1{font-size:30px;}
+    .stage-split{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    .process-page-head{padding:30px 0 28px;}
+    .process-page-head h1{font-size:25px;}
+    .stage-card{padding:20px 18px 22px;border-radius:18px;}
+    .stage-card .pill-title{font-size:15px;padding:11px 18px;}
+  }
+
+  /* documents + embassy share one continuous grey band (no white gap) */
+  .docs-embassy-band{background:var(--grey-300);padding:24px 0 26px;position:relative;}
+  /* stretch so the booking card can run from above the documents down to the
+     bottom of the embassy area */
+  .docs-embassy-row{display:flex;align-items:stretch;gap:40px;}
+  @media (max-width:1000px){ .docs-embassy-row{gap:24px;} }
+  @media (max-width:820px){ .docs-embassy-row{flex-direction:column;} }
+  .docs-embassy-left{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .docs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  /* link from the summary grid through to the full breakdown */
+  .docs-detail-link{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;
+    margin-top:16px;background:#141414;color:#fff;border:none;font-weight:800;font-size:14px;
+    padding:13px 24px;border-radius:var(--radius-pill);}
+  .docs-detail-link:hover{background:#2c2c2c;}
+  .docs-detail-link svg{flex:none;}
+
+  /* ---------- documents-by-visa-type page ---------- */
+  .docs-page-head{background:var(--grey-300);padding:44px 0 40px;}
+  .docs-page-head .back-link{color:#fff;margin-bottom:22px;}
+  .docs-page-head h1{margin:0;font-size:38px;font-weight:800;color:#fff;line-height:1.18;}
+  .docs-page-head .docs-page-sub{margin:14px 0 0;color:rgba(255,255,255,.9);
+    font-weight:500;font-size:15px;max-width:640px;line-height:1.6;}
+  .docs-type-list{padding-top:40px;padding-bottom:20px;display:flex;flex-direction:column;gap:22px;}
+  .docs-type-card{background:var(--grey-500);border-radius:22px;padding:26px 28px 28px;}
+  .docs-type-card .pill-title{display:inline-block;background:#141414;color:#fff;font-weight:800;
+    font-size:18px;padding:12px 24px;border-radius:var(--radius-pill);margin:0 0 6px;}
+  .docs-type-card .type-note{margin:12px 0 20px;font-weight:600;font-size:14px;color:#444;line-height:1.6;}
+  .docs-type-card ul{list-style:none;margin:0;padding:0;
+    display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .docs-type-card li{background:#fff;color:#141414;font-weight:700;font-size:14px;
+    padding:14px 18px;border-radius:14px;line-height:1.45;}
+  .docs-note{padding-top:6px;padding-bottom:54px;}
+  .docs-note p{margin:0;font-weight:600;font-size:13.5px;color:#666;line-height:1.65;}
+  @media (max-width:820px){
+    .docs-page-head h1{font-size:30px;}
+    .docs-type-card ul{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    .docs-page-head{padding:30px 0 28px;}
+    .docs-page-head h1{font-size:25px;}
+    .docs-type-card{padding:20px 18px 22px;border-radius:18px;}
+    .docs-type-card .pill-title{font-size:15px;padding:11px 18px;}
+    .docs-detail-link{font-size:13px;padding:12px 18px;width:100%;justify-content:center;}
+  }
+  @media (max-width:640px){ .docs-grid{grid-template-columns:repeat(2,1fr);} }
+  .docs-grid span{background:#fff;color:#141414;font-weight:800;font-size:14px;
+    padding:14px 10px;border-radius:var(--radius-pill);text-align:center;}
+
+  .booking-card{
+    background:rgba(20,20,20,.88);color:#fff;border-radius:24px;padding:24px;
+    flex:none;width:400px;margin-top:-60px;position:relative;z-index:5;
+    display:flex;flex-direction:column;justify-content:flex-start;
+  }
+  @media (max-width:1000px){ .booking-card{width:340px;padding:18px;} }
+  @media (max-width:820px){ .booking-card{margin:10px auto 0;width:100%;max-width:400px;} }
+  /* title pill and Apply Now button share the same width */
+  .booking-card .pill-title{background:var(--grey-200);color:#141414;font-weight:800;text-align:center;
+    padding:12px;border-radius:var(--radius-pill);margin:0 auto 16px;font-size:15px;width:72%;}
+  .booking-card .apply-btn{display:block;margin:8px auto 0;padding:13px 0;width:72%;}
+  .booking-card .wa-optin{justify-content:center;text-align:left;}
+  .icon-bare{display:flex;align-items:center;justify-content:center;width:30px;flex:none;}
+  /* wireframe order: WhatsApp above phone on the left, timings to their right */
+  .booking-contacts{display:flex;align-items:center;gap:26px;margin-top:18px;flex-wrap:wrap;}
+  .booking-contacts-left{display:flex;flex-direction:column;gap:12px;}
+
+  /* sits in the space left below the documents, centred in that space */
+  .embassy-bar{display:flex;align-items:center;justify-content:center;gap:28px;
+    margin-top:64px;flex:1;padding-right:60px;}
+  .embassy-bar .pin{width:84px;height:84px;flex:none;
+    display:flex;align-items:center;justify-content:center;}
+  /* narrower and taller — room for an address to sit inside */
+  .embassy-bar .label{background:var(--grey-200);padding:44px 30px;border-radius:18px;
+    font-weight:800;font-size:22px;color:#141414;flex:0 1 430px;text-align:center;}
+
+  /* ---------- contact block, narrow layouts only ---------------------------
+     Below 900px the form's right-hand column is too narrow to hold two contact
+     lines side by side, so the three stack. This is the ONLY place the stacked
+     arrangement applies — above it the desktop layout above stands.
+
+     `display:contents` dissolves the wrapper holding two of the three lines, so
+     all three become direct children of one flex column and a single `gap`
+     governs every space between them — that is what makes them equidistant.
+
+     The column is `width:max-content` and centred with `margin:auto`, while the
+     lines inside stay LEFT aligned: that puts every icon on one vertical axis.
+     Centring each line on its own staggers them, because the hours line is
+     narrower than a phone number. */
+  /* Two thresholds, because the two blocks run out of room at different
+     points: the CTA form's right-hand column at 900px, and the country page's
+     booking card at 1000px — that is where the card itself drops to 340px and
+     its contacts would otherwise wrap raggedly of their own accord. */
+  @media (max-width:900px){
+    .contact-col{
+      display:flex;flex-direction:column;align-items:stretch;
+      gap:16px;width:max-content;max-width:100%;
+      margin-left:auto;margin-right:auto;padding-bottom:0;
+    }
+    .contact-col .contact-lines-wrap{display:contents;}
+    .contact-col .contact-line{justify-content:flex-start;padding:0;}
+    .contact-col .contact-line a{padding:0;justify-content:flex-start;}
+  }
+  @media (max-width:1000px){
+    .booking-contacts{
+      display:flex;flex-direction:column;align-items:stretch;
+      gap:16px;width:max-content;max-width:100%;
+      margin:18px auto 0;
+    }
+    .booking-contacts-left{display:contents;}
+    .booking-contacts .contact-line{justify-content:flex-start;padding:0;}
+    .booking-contacts .contact-line a{padding:0;justify-content:flex-start;}
+  }
+
+  @media (max-width:900px){
+    /* give the destination select back the width the label was taking */
+    .form-row label{width:104px;font-size:12.5px;}
+    .dest-field input{padding-right:34px;}
+  }
+
+  /* vertical only — a padding shorthand here would cancel .wrap's side padding */
+  .faq-list{padding-bottom:40px;}
+  .faq-item{border-bottom:1.5px solid #141414;}
+  .faq-q{width:100%;background:none;border:none;display:flex;align-items:center;
+    justify-content:space-between;padding:20px 0;font-weight:800;font-size:16px;text-align:left;
+    color:#141414;gap:20px;}
+  /* the question is one flex item, so an inline <span> inside it (the country
+     name) flows with the words instead of being spread by space-between */
+  .faq-q .faq-text{flex:1;min-width:0;}
+  .faq-q .chev{transition:transform .25s ease;flex:none;display:flex;align-items:center;}
+  .faq-item.open .faq-q .chev{transform:rotate(180deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .faq-item.open .faq-a{max-height:1200px;}
+  .faq-a p{margin:0 0 20px;font-weight:500;font-size:14.5px;color:#444;line-height:1.6;}
+
+  /* ---------- Services page ---------- */
+  /* Journey: cards step down in a zigzag, a flight path weaves between them
+     and a plane flies along it as the page is scrolled. */
+  /* wide centre gutter gives the flight path room to sweep, as drawn */
+  .service-journey{
+    display:grid;grid-template-columns:1fr 1fr;column-gap:22%;
+    padding:30px 0 70px;position:relative;
+  }
+  .journey-svg{
+    position:absolute;inset:0;width:100%;height:100%;
+    pointer-events:none;overflow:visible;
+  }
+  .journey-svg--lines{z-index:1;}
+  .journey-svg--plane{z-index:3;}
+  /* runway: dashed centre markings ahead, solid behind the plane */
+  .journey-trail{stroke:rgba(20,20,20,.18);stroke-width:5;stroke-linecap:round;
+    stroke-dasharray:18 16;}
+  .journey-line{stroke:#141414;stroke-width:5;stroke-linecap:round;}
+  .journey-plane{transform-box:view-box;}
+
+  .journey-col{display:flex;flex-direction:column;gap:96px;}
+  /* right-hand column steps down so the stops read as a journey */
+  .journey-col--stagger{margin-top:200px;}
+
+  .journey-card{
+    background:var(--grey-100);border-radius:20px;padding:4px;position:relative;z-index:2;
+  }
+  .journey-card .pill-title{background:#141414;color:#fff;font-weight:800;font-size:18px;
+    padding:16px 22px;border-radius:16px;margin-bottom:16px;}
+  .journey-card .body{padding:0 18px 22px;font-size:14.5px;font-weight:600;line-height:1.6;color:#222;}
+  .journey-card .body p{margin:0 0 12px;}
+  /* keep the journey + flight path alive in narrow panes; scale it down
+     rather than hiding it, and only stack on genuinely small screens */
+  @media (max-width:900px){
+    .service-journey{column-gap:15%;padding:20px 0 50px;}
+    .journey-col{gap:60px;}
+    .journey-col--stagger{margin-top:130px;}
+    .journey-card .pill-title{font-size:15px;padding:12px 15px;border-radius:13px;}
+    .journey-card .body{font-size:12.5px;padding:0 14px 16px;line-height:1.5;}
+    .journey-line,.journey-trail{stroke-width:4;}
+  }
+  @media (max-width:560px){
+    /* Stacked stops with the runway as a rail down their left. The columns
+       collapse away so all four cards order by journey step (1-4) instead of
+       column-by-column. */
+    .service-journey{display:flex;flex-direction:column;gap:22px;padding-left:46px;}
+    .journey-col{display:contents;}
+    .journey-card[data-stop="1"]{order:1;}
+    .journey-card[data-stop="2"]{order:2;}
+    .journey-card[data-stop="3"]{order:3;}
+    .journey-card[data-stop="4"]{order:4;}
+    .journey-line,.journey-trail{stroke-width:4;}
+  }
+  @media (prefers-reduced-motion: reduce){ .journey-plane{display:none;} }
+
+  /* ---------- Blog page ---------- */
+
+  .blog-hero{padding-top:60px;padding-bottom:30px;text-align:center;}
+  .tag-bar{position:sticky;top:0;background:var(--grey-300);z-index:30;padding:20px 0;}
+  .tag-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .tag-pill{background:#fff;border:none;font-weight:800;font-size:14px;color:#333;
+    padding:13px 24px;border-radius:var(--radius-pill);}
+  .tag-pill.active{background:#141414;color:#fff;}
+  .blog-list{display:flex;flex-direction:column;gap:26px;padding:40px 0;}
+  .blog-card{background:#141414;border-radius:24px;padding:22px;}
+  .blog-card .tag-row{margin-bottom:14px;}
+  .blog-card .tag-row .tag-pill{padding:10px 20px;font-size:13px;pointer-events:none;}
+  .blog-inner{background:var(--grey-300);border-radius:18px;padding:26px 28px;color:#fff;
+    display:flex;justify-content:space-between;gap:20px;cursor:pointer;flex-wrap:wrap;}
+  .blog-inner:hover{background:var(--grey-400);}
+  .blog-inner .txt h3{margin:0 0 4px;font-size:19px;font-weight:800;}
+  .blog-inner .txt h4{margin:0 0 12px;font-size:19px;font-weight:800;}
+  .blog-inner .txt p{margin:0;font-size:14px;font-weight:500;max-width:560px;line-height:1.6;}
+  .blog-author{display:flex;align-items:center;gap:10px;font-weight:800;font-size:13.5px;
+    white-space:nowrap;flex:none;text-align:right;}
+  .blog-empty{padding:40px 0;text-align:center;font-weight:700;color:#888;}
+
+  /* post page */
+  .post-body{max-width:760px;margin:0 auto;padding-top:50px;padding-bottom:80px;}
+  .post-body h1{font-size:30px;font-weight:800;margin-bottom:6px;}
+  .post-meta{font-weight:700;color:#777;margin-bottom:26px;font-size:14px;}
+  .post-body p{font-size:16px;line-height:1.75;font-weight:500;margin-bottom:18px;color:#222;}
+  .back-link{display:inline-flex;align-items:center;gap:8px;font-weight:800;margin-bottom:26px;background:none;border:none;font-size:14px;}
+
+
+  .home-carousel{padding-top:36px;padding-bottom:36px;}
+  .blog-box-inner{padding:6px 40px;}
+  @media (max-width:720px){
+    .home-carousel{padding-top:24px;padding-bottom:24px;}
+    .blog-box-inner{padding:6px 16px;}
+  }
+
+  /* ==========================================================
+     Small screens. The logic sheet asks for swipe on mobile, so the
+     carousel arrows give way to full-width cards you drag.
+     ========================================================== */
+  @media (max-width:720px){
+    /* --- touch targets: aim for ~44px --- */
+    .nav-links{gap:20px;}
+    .nav-links button{padding:12px 2px;font-size:13px;}
+    .footer-col button, .footer-col a{padding:10px 0;margin-bottom:0;}
+    .footer-col a.footer-contact-line{padding:10px 0;margin-bottom:0;}
+    .contact-line a{padding:8px 0;}
+    .faq-q{padding:18px 0;font-size:15px;gap:14px;}
+
+    /* --- testimonials: a pill radius turns a tall wrapped card into an
+           oval, so square it off and stack the attribution --- */
+    .testimonial-viewport{height:420px;}
+    .testimonial-card{
+      border-radius:20px;flex-direction:column;align-items:flex-start;
+      gap:14px;padding:20px 22px;
+    }
+    .testimonial-card p{font-size:14px;}
+    .testimonial-name{white-space:normal;}
+
+    /* --- type scale --- */
+    .hero h1, .hero-home h1{font-size:24px;}
+    .cta-title{font-size:21px;}
+    .blog-box-heading{font-size:24px;}
+    .blog-hero h1{font-size:24px;}
+
+    /* --- home blog box --- */
+    .blog-box-section{padding:26px 0 40px;}
+    .blog-box{padding:28px 0 40px;border-radius:26px;}
+
+    /* --- country page --- */
+    .country-hero{padding:36px 0 44px;}
+    .country-hero .hero-left{padding-left:20px;}
+    .country-hero .country-name-pill{font-size:24px;padding:13px 28px;margin-bottom:22px;}
+    .country-tags{gap:12px;}
+    .country-tags span{font-size:15px;padding:12px 20px;}
+    .country-tabs-band{padding:14px 0;}
+    .country-tabs{gap:10px;}
+    .country-tabs button{font-size:13.5px;padding:14px 10px;min-width:0;flex:1 1 calc(50% - 5px);}
+    .stepper-band{padding:40px 0 44px;}
+    .docs-embassy-band{padding:20px 0 28px;}
+    .embassy-bar{flex-direction:column;gap:14px;margin-top:32px;padding-right:0;}
+    .embassy-bar .pin{width:58px;height:58px;}
+    .embassy-bar .pin svg{width:52px;height:52px;}
+    .embassy-bar .label{flex:1 1 auto;width:100%;padding:24px 18px;font-size:19px;}
+    .booking-card{padding:20px;}
+    .booking-card .pill-title, .booking-card .apply-btn{width:100%;}
+
+    /* --- forms --- */
+    .cta-box{padding:20px;}
+    /* centre the submit under the stacked fields */
+    .cta-box form .apply-btn{display:block;margin-left:auto;margin-right:auto;}
+    .cta-box .wa-optin{justify-content:center;}
+    .form-row label{width:104px;font-size:12.5px;}
+    .form-row input{font-size:16px;}   /* 16px stops iOS zooming on focus */
+
+    /* --- footer --- */
+    .footer-row{gap:26px;}
+    .footer-logo{width:50px;height:50px;}
+  }
+
+  /* Swipe-driven carousels: drop the arrows and use the full width. */
+  @media (max-width:560px){
+    .scroller-row .scroll-btn{display:none;}
+    .scroller-row{gap:0;}
+    .blog-teaser-card{height:auto;min-height:180px;}
+  }
+
+
+  /* ---------- mobile menu + collapsible footer (base state) ---------- */
+  .nav-toggle{
+    display:none;flex-direction:column;justify-content:center;gap:5px;
+    width:44px;height:44px;flex:none;margin-left:auto;
+    background:none;border:none;padding:0 10px;
+  }
+  .nav-toggle span{display:block;height:2.5px;border-radius:2px;background:#fff;}
+  .footer-toggle{cursor:default;}
+  .chev-sm{display:none;}
+
+  @media (max-width:720px){
+    /* --- header: collapse the links behind a menu button --- */
+    .header-row{flex-wrap:nowrap;gap:10px;}
+    .nav-toggle{display:flex;}
+    .nav-links{
+      display:none;position:absolute;top:calc(100% + 8px);right:16px;left:auto;
+      width:210px;order:0;flex-direction:column;align-items:stretch;gap:0;
+      background:#fff;border-radius:16px;padding:6px;
+      box-shadow:0 14px 34px rgba(0,0,0,.28);z-index:60;
+    }
+    .nav-links.open{display:flex;}
+    .nav-links button{
+      color:#141414;text-align:left;padding:14px 16px;border-radius:11px;font-size:14px;
+    }
+    .nav-links button:hover{background:#f1f1f1;}
+    .search-wrap{max-width:none;}
+
+    /* --- carousels: partial next card + visible arrows signal swipe --- */
+    .scroller-row{position:relative;gap:0;}
+    .scroller-row .scroll-btn{
+      display:flex;position:absolute;top:50%;transform:translateY(-50%);z-index:6;
+      width:38px;height:38px;background:rgba(18,18,18,.62);color:#fff;
+      box-shadow:0 2px 10px rgba(0,0,0,.3);font-size:20px;
+    }
+    .scroller-row .scroll-btn:hover{background:rgba(18,18,18,.78);}
+    .scroller-row .scroll-btn:first-child{left:6px;}
+    .scroller-row .scroll-btn:last-child{right:6px;}
+    /* Centre the active card with a sliver of its neighbours showing either
+       side; the arrows then sit in that gap rather than over the card. */
+    .scroller{padding-left:15%;padding-right:15%;}
+    /* 100% of the padded content box == the viewport minus both gutters, so
+       the card lands dead centre with a neighbour peeking either side */
+    .country-card{flex:0 0 100%;}
+    .country-card .thumb{height:170px;}
+    .blog-teaser-card{flex:0 0 100%;height:auto;min-height:210px;padding:24px 26px;}
+    .blog-teaser-card h4{font-size:15.5px;}
+    .blog-teaser-card p{font-size:13px;}
+
+    /* --- service pills: smaller, two to a row --- */
+    .service-pill-row{gap:10px;padding:4px 0 34px;}
+    .service-pill{
+      min-width:0;flex:1 1 calc(50% - 5px);padding:15px 10px;
+      font-size:13px;border-radius:14px;
+    }
+
+    /* --- blog filter: two per row, so the sticky bar stays short.
+           Scoped to the filter row so the tags on cards are untouched. --- */
+    .tag-bar{padding:12px 0;}
+    #blog-tag-row{gap:8px;}
+    #blog-tag-row .tag-pill{
+      flex:1 1 calc(50% - 4px);min-width:0;padding:11px 6px;
+      font-size:12.5px;text-align:center;
+    }
+
+    /* --- footer: tap a heading to expand --- */
+    .footer-row{flex-direction:column;gap:0;}
+    .footer-col{width:100%;border-top:1px solid rgba(255,255,255,.28);}
+    .footer-toggle{
+      display:flex;align-items:center;justify-content:space-between;
+      cursor:pointer;margin:0;padding:15px 0;font-size:13.5px;
+    }
+    .chev-sm{
+      display:block;width:9px;height:9px;border-right:2.5px solid #fff;
+      border-bottom:2.5px solid #fff;transform:rotate(45deg);margin-top:-4px;
+      transition:transform .2s ease;flex:none;
+    }
+    .footer-col.open .chev-sm{transform:rotate(225deg);margin-top:2px;}
+    .footer-col-body{display:none;padding:0 0 14px;}
+    .footer-col.open .footer-col-body{display:block;}
+    .footer-logo{margin-bottom:18px;}
+  }
+
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!--  TEMPLATE: header + footer are injected by JS into each page  -->
+<!-- ============================================================ -->
+<template id="tpl-header">
+  <header class="site-header">
+    <div class="header-row">
+      <button class="logo-btn" data-action="logo" aria-label="Viscraft home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#ffffff" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3Z" stroke="#ffffff" stroke-width="1.6"/></svg>
+      </button>
+      <div class="search-wrap">
+        <div class="search-bar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9a9a9a" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" class="country-search-input" placeholder="Tell us where you're going" autocomplete="off"
+                 role="combobox" aria-autocomplete="list" aria-expanded="false">
+        </div>
+        <div class="search-dropdown"></div>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links">
+        <button data-action="about">ABOUT US</button>
+        <button data-action="services">SERVICES</button>
+        <button data-action="blog">BLOG</button>
+        <button data-action="contact">CONTACT US</button>
+      </nav>
+    </div>
+  </header>
+</template>
+
+<template id="tpl-footer">
+  <footer class="site-footer" id="site-footer">
+    <div class="wrap footer-row">
+      <button class="footer-logo" data-action="logo" aria-label="Viscraft home" style="cursor:pointer;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#ffffff" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3Z" stroke="#ffffff" stroke-width="1.6"/></svg>
+      </button>
+      <div class="footer-col">
+        <h5 class="footer-toggle" role="button" tabindex="0" aria-expanded="false">COMPANY<i class="chev-sm"></i></h5>
+        <div class="footer-col-body">
+          <button data-action="about">About Us</button>
+          <button data-action="services">Services</button>
+          <button data-action="blog">Blog</button>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5 class="footer-toggle" role="button" tabindex="0" aria-expanded="false">CONTACT US<i class="chev-sm"></i></h5>
+        <div class="footer-col-body">
+        <a href="https://wa.me/911234567899" target="_blank" rel="noopener" class="footer-contact-line">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2.5C6.98 2.5 2.9 6.58 2.9 11.6c0 1.77.47 3.42 1.28 4.85L3 21.5l5.2-1.16a9.6 9.6 0 0 0 3.8.79c5.02 0 9.1-4.08 9.1-9.1S17.02 2.5 12 2.5Zm5.1 12.98c-.22.6-1.24 1.16-1.72 1.22-.44.06-1 .08-1.6-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.88-.13-.18-1.05-1.4-1.05-2.66s.66-1.88.9-2.14c.23-.26.51-.32.68-.32.17 0 .34.001.49.008.16.007.37-.06.58.44.22.52.73 1.79.8 1.92.07.13.11.28.02.46-.09.18-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.27-.11.52.15.26.68 1.14 1.47 1.85 1.01.9 1.87 1.19 2.13 1.32.26.13.42.11.57-.07.16-.17.65-.76.82-1.02.17-.26.35-.22.58-.13.23.09 1.48.7 1.73.83.26.13.43.19.49.3.07.12.07.68-.15 1.28Z" fill="#fff"/></svg>
+          +91 1234567899
+        </a>
+        <a href="tel:+911234567899" class="footer-contact-line">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 4h3l2 5-2 2a12 12 0 0 0 6 6l2-2 5 2v3a2 2 0 0 1-2 2C10.5 22 2 13.5 2 6a2 2 0 0 1 2-2Z" stroke="#fff" stroke-width="1.6"/></svg>
+          +91 1234567899
+        </a>
+        <a href="mailto:info@viscraft.co.in" class="footer-contact-line">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#fff" stroke-width="1.6"/><path d="m3 6 9 7 9-7" stroke="#fff" stroke-width="1.6"/></svg>
+          info@viscraft.co.in
+        </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5 class="footer-toggle" role="button" tabindex="0" aria-expanded="false">FOLLOW US<i class="chev-sm"></i></h5>
+        <div class="footer-col-body">
+        <div class="footer-socials">
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="#fff" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1" fill="#fff"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 3h-2a5 5 0 0 0-5 5v2H6v4h2v7h4v-7h3l1-4h-4V8a1 1 0 0 1 1-1h3V3Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap trust-strip">
+      <p>We don&rsquo;t just book your trip. We craft it.</p>
+    </div>
+  </footer>
+</template>
+
+<!-- ============================================================ -->
+<!-- HOME PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="home">
+  <div data-slot="header"></div>
+
+  <section class="hero-home">
+    <svg class="watermark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="32" y="18" width="136" height="164" rx="16" stroke="#fff" stroke-width="3"/>
+      <circle cx="100" cy="92" r="34" stroke="#fff" stroke-width="3"/>
+      <path d="M100 58c9 9 14 21.5 14 34s-5 25-14 34c-9-9-14-21.5-14-34s5-25 14-34Z" stroke="#fff" stroke-width="2.2"/>
+      <path d="M66 92h68" stroke="#fff" stroke-width="2.2"/>
+      <path d="M56 150h88" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="wrap"><h1>Travel planning, done with craft - not guesswork</h1></div>
+  </section>
+
+  <section class="wrap home-carousel">
+    <div class="scroller-row">
+      <button class="scroll-btn" data-scroll="home-countries" data-dir="-1" aria-label="Scroll left">‹</button>
+      <div class="scroller-viewport">
+        <div class="scroller" id="home-countries"></div>
+      </div>
+      <button class="scroll-btn" data-scroll="home-countries" data-dir="1" aria-label="Scroll right">›</button>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="service-pill-row">
+      <button class="service-pill" data-action="services">VISA Documentation</button>
+      <button class="service-pill" data-action="services">Itinerary Planning</button>
+      <button class="service-pill" data-action="services">Destination Bookings</button>
+      <button class="service-pill" data-action="services">D-Day Support</button>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:20px;padding-bottom:20px;">
+    <div class="testimonial-viewport">
+      <div class="testimonial-track" id="home-testimonials"></div>
+    </div>
+  </section>
+
+  <section class="blog-box-section">
+    <div class="wrap">
+      <div class="blog-box">
+        <h2 class="blog-box-heading">The Viscraft Blog</h2>
+        <div class="blog-box-inner">
+          <div class="scroller-row">
+            <button class="scroll-btn on-dark" data-scroll="home-blog" data-dir="-1" aria-label="Scroll left">‹</button>
+            <div class="scroller-viewport">
+              <div class="scroller" id="home-blog"></div>
+            </div>
+            <button class="scroll-btn on-dark" data-scroll="home-blog" data-dir="1" aria-label="Scroll right">›</button>
+          </div>
+        </div>
+        <div class="blog-box-fade"></div>
+      </div>
+    </div>
+  </section>
+
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- ABOUT US PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="about">
+  <div data-slot="header"></div>
+
+  <section class="hero"><div class="wrap"><h1>Travel planning, done with craft - not guesswork</h1></div></section>
+
+  <section class="band-grey">
+    <div class="wrap">
+      <span class="pill-heading">Who Are We?</span>
+      <p class="band-text">At Viscraft, we believe travel is more than just reaching a destination — it's about discovering new perspectives, creating lasting memories, and connecting with the world in meaningful ways. Our mission is to craft seamless, personalized travel experiences that turn your dreams into reality, whether you're seeking a relaxing getaway, an adventurous expedition, or a cultural immersion. With a passion for exceptional service and an eye for detail, we handle every aspect of your journey so you can focus on what matters most — making memories that last a lifetime.</p>
+    </div>
+  </section>
+
+  <section class="band-white">
+    <div class="wrap">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:26px;">
+        <span class="pill-heading dark">Our Origin Story</span>
+      </div>
+      <p class="band-text" style="color:#141414;">At Viscraft, we believe travel is more than just reaching a destination — it's about discovering new perspectives, creating lasting memories, and connecting with the world in meaningful ways. Our mission is to craft seamless, personalized travel experiences that turn your dreams into reality, whether you're seeking a relaxing getaway, an adventurous expedition, or a cultural immersion. With a passion for exceptional service and an eye for detail, we handle every aspect of your journey so you can focus on what matters most — making memories that last a lifetime.</p>
+    </div>
+  </section>
+
+  <section class="band-grey">
+    <div class="wrap">
+      <span class="pill-heading">Why Viscraft?</span>
+      <p class="band-text">At Viscraft, we believe travel is more than just reaching a destination — it's about discovering new perspectives, creating lasting memories, and connecting with the world in meaningful ways. Our mission is to craft seamless, personalized travel experiences that turn your dreams into reality, whether you're seeking a relaxing getaway, an adventurous expedition, or a cultural immersion. With a passion for exceptional service and an eye for detail, we handle every aspect of your journey so you can focus on what matters most — making memories that last a lifetime.</p>
+    </div>
+  </section>
+
+  <section class="band-white">
+    <div class="wrap">
+      <h2 class="cta-title">Planning your next trip already?</h2>
+      <div class="cta-box" data-consult-form-wrap>
+        <span class="cta-heading-pill">Book a consultation call with us</span>
+        <span class="direct-pill">Or reach out to us directly!</span>
+        <form data-consult-form novalidate>
+            <div class="form-row"><label>Name</label><input type="text" name="name" data-field="name"></div>
+            <div class="field-error" data-error="name"></div>
+            <div class="form-row"><label>Contact No.</label><input type="tel" name="contact" data-field="contact"></div>
+            <div class="field-error" data-error="contact"></div>
+            <div class="form-row"><label>Email ID</label><input type="email" name="email" data-field="email"></div>
+            <div class="field-error" data-error="email"></div>
+            <div class="form-row"><label>Destination</label><div class="dest-field"><input type="text" name="country" data-field="country" autocomplete="off" placeholder="Type or pick" role="combobox" aria-autocomplete="list" aria-expanded="false"><button type="button" class="dest-toggle" tabindex="-1" aria-label="Show all destinations"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m5 9 7 7 7-7" stroke="#141414" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="dest-dropdown"></div></div></div>
+            <div class="field-error" data-error="country"></div>
+            <label class="wa-optin">
+              <input type="checkbox" name="whatsapp" value="yes">
+              <span class="wa-box" aria-hidden="true"></span>
+              <span class="wa-text">Send me regular updates on WhatsApp</span>
+            </label>
+            <button type="submit" class="apply-btn">Apply Now</button>
+            <div class="form-success">Thanks! We'll call you shortly.</div>
+          </form>
+        <div class="contact-col">
+          <div class="contact-lines-wrap">
+            <div class="contact-line"><a href="https://wa.me/911234567899" target="_blank" rel="noopener"><span class="icon-circle"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2.5C6.98 2.5 2.9 6.58 2.9 11.6c0 1.77.47 3.42 1.28 4.85L3 21.5l5.2-1.16a9.6 9.6 0 0 0 3.8.79c5.02 0 9.1-4.08 9.1-9.1S17.02 2.5 12 2.5Zm5.1 12.98c-.22.6-1.24 1.16-1.72 1.22-.44.06-1 .08-1.6-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.88-.13-.18-1.05-1.4-1.05-2.66s.66-1.88.9-2.14c.23-.26.51-.32.68-.32.17 0 .34.001.49.008.16.007.37-.06.58.44.22.52.73 1.79.8 1.92.07.13.11.28.02.46-.09.18-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.27-.11.52.15.26.68 1.14 1.47 1.85 1.01.9 1.87 1.19 2.13 1.32.26.13.42.11.57-.07.16-.17.65-.76.82-1.02.17-.26.35-.22.58-.13.23.09 1.48.7 1.73.83.26.13.43.19.49.3.07.12.07.68-.15 1.28Z" fill="#fff"/></svg></span>+91 1234567899</a></div>
+            <div class="contact-line"><a href="tel:+911234567899"><span class="icon-bare"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7.5 3.5 9.8 8l-2 2.1a13.5 13.5 0 0 0 6.1 6.1l2.1-2 4.5 2.3v3.2a1.8 1.8 0 0 1-2 1.8C10.4 20.8 3.2 13.6 2.2 4.5A1.8 1.8 0 0 1 4 2.5h3.5Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg></span>+91 1234567899</a></div>
+          </div>
+          <div class="contact-line"><span class="icon-circle"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="#fff" stroke-width="1.8"/><path d="M12 6.6V12l3.4 2.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></span>10 A.M. to 8 P.M.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-slot="footer" data-self-refresh="about"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- SERVICES PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="services">
+  <div data-slot="header"></div>
+
+  <section class="hero"><div class="wrap"><h1>Experience end to end travel experience</h1></div></section>
+
+  <section class="wrap">
+    <div class="service-journey" id="service-journey">
+      <!-- flight path + plane, drawn to fit the cards by JS -->
+      <svg class="journey-svg journey-svg--lines" aria-hidden="true">
+        <path class="journey-trail" fill="none"/>
+        <path class="journey-line" fill="none"/>
+      </svg>
+      <!-- plane rides above the cards so it stays visible as it passes them -->
+      <svg class="journey-svg journey-svg--plane" aria-hidden="true">
+        <g class="journey-plane">
+          <path fill="#141414" transform="translate(-12,-12)"
+                d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+        </g>
+      </svg>
+
+      <div class="journey-col">
+        <div class="journey-card" data-stop="1">
+          <div class="pill-title">VISA Documentation Assistance</div>
+          <div class="body">
+            <p>We handle your documentation, bulletproof your application &amp; book your appointments</p>
+            <p>Supported for Schengen, USA, UK, Canada, New Zealand, Japan, China, Australia &amp; Ireland</p>
+          </div>
+        </div>
+        <div class="journey-card" data-stop="3">
+          <div class="pill-title">Travel Bookings</div>
+          <div class="body">
+            <p>Leave the hassle of managing your bookings to us!</p>
+            <p>We get your flights &amp; hotels booked too.</p>
+          </div>
+        </div>
+      </div>
+      <div class="journey-col journey-col--stagger">
+        <div class="journey-card" data-stop="2">
+          <div class="pill-title">Itinerary Planning</div>
+          <div class="body">
+            <p>Having trouble planning out your journey?</p>
+            <p>Get your day-wise itinerary according to your travel destinations</p>
+          </div>
+        </div>
+        <div class="journey-card" data-stop="4">
+          <div class="pill-title">D-Day Support</div>
+          <div class="body">
+            <p>Trouble with any of your appointments or bookings?</p>
+            <p>Reach out to us &amp; we'll get things sorted!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-white">
+    <div class="wrap">
+      <h2 class="cta-title">Don't wait up, start your journey with us!</h2>
+      <div class="cta-box">
+        <span class="cta-heading-pill">Book a consultation call with us</span>
+        <span class="direct-pill">Or reach out to us directly!</span>
+        <form data-consult-form novalidate>
+            <div class="form-row"><label>Name</label><input type="text" name="name" data-field="name"></div>
+            <div class="field-error" data-error="name"></div>
+            <div class="form-row"><label>Contact No.</label><input type="tel" name="contact" data-field="contact"></div>
+            <div class="field-error" data-error="contact"></div>
+            <div class="form-row"><label>Email ID</label><input type="email" name="email" data-field="email"></div>
+            <div class="field-error" data-error="email"></div>
+            <div class="form-row"><label>Destination</label><div class="dest-field"><input type="text" name="country" data-field="country" autocomplete="off" placeholder="Type or pick" role="combobox" aria-autocomplete="list" aria-expanded="false"><button type="button" class="dest-toggle" tabindex="-1" aria-label="Show all destinations"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m5 9 7 7 7-7" stroke="#141414" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="dest-dropdown"></div></div></div>
+            <div class="field-error" data-error="country"></div>
+            <label class="wa-optin">
+              <input type="checkbox" name="whatsapp" value="yes">
+              <span class="wa-box" aria-hidden="true"></span>
+              <span class="wa-text">Send me regular updates on WhatsApp</span>
+            </label>
+            <button type="submit" class="apply-btn">Apply Now</button>
+            <div class="form-success">Thanks! We'll call you shortly.</div>
+          </form>
+        <div class="contact-col">
+          <div class="contact-lines-wrap">
+            <div class="contact-line"><a href="https://wa.me/911234567899" target="_blank" rel="noopener"><span class="icon-circle"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2.5C6.98 2.5 2.9 6.58 2.9 11.6c0 1.77.47 3.42 1.28 4.85L3 21.5l5.2-1.16a9.6 9.6 0 0 0 3.8.79c5.02 0 9.1-4.08 9.1-9.1S17.02 2.5 12 2.5Zm5.1 12.98c-.22.6-1.24 1.16-1.72 1.22-.44.06-1 .08-1.6-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.88-.13-.18-1.05-1.4-1.05-2.66s.66-1.88.9-2.14c.23-.26.51-.32.68-.32.17 0 .34.001.49.008.16.007.37-.06.58.44.22.52.73 1.79.8 1.92.07.13.11.28.02.46-.09.18-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.27-.11.52.15.26.68 1.14 1.47 1.85 1.01.9 1.87 1.19 2.13 1.32.26.13.42.11.57-.07.16-.17.65-.76.82-1.02.17-.26.35-.22.58-.13.23.09 1.48.7 1.73.83.26.13.43.19.49.3.07.12.07.68-.15 1.28Z" fill="#fff"/></svg></span>+91 1234567899</a></div>
+            <div class="contact-line"><a href="tel:+911234567899"><span class="icon-bare"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7.5 3.5 9.8 8l-2 2.1a13.5 13.5 0 0 0 6.1 6.1l2.1-2 4.5 2.3v3.2a1.8 1.8 0 0 1-2 1.8C10.4 20.8 3.2 13.6 2.2 4.5A1.8 1.8 0 0 1 4 2.5h3.5Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg></span>+91 1234567899</a></div>
+          </div>
+          <div class="contact-line"><span class="icon-circle"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="#fff" stroke-width="1.8"/><path d="M12 6.6V12l3.4 2.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></span>10 A.M. to 8 P.M.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- COUNTRY PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="country">
+  <div data-slot="header"></div>
+
+  <section class="country-hero">
+    <svg class="watermark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="32" y="18" width="136" height="164" rx="16" stroke="#fff" stroke-width="3"/>
+      <circle cx="100" cy="92" r="34" stroke="#fff" stroke-width="3"/>
+      <path d="M100 58c9 9 14 21.5 14 34s-5 25-14 34c-9-9-14-21.5-14-34s5-25 14-34Z" stroke="#fff" stroke-width="2.2"/>
+      <path d="M66 92h68" stroke="#fff" stroke-width="2.2"/>
+      <path d="M56 150h88" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="hero-left">
+      <span class="country-name-pill" data-country-field="name">Switzerland</span>
+      <div class="country-tags">
+        <span data-country-field="priceline">Starting INR 4,499</span>
+        <span>Guaranteed TAT</span>
+        <span>Rush Orders Available</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="country-tabs-band">
+    <nav class="country-tabs wrap">
+      <button data-jump="visa-process" class="active">VISA Process</button>
+      <button data-jump="documents">Documents</button>
+      <button data-jump="where-to-apply">Where To Apply</button>
+      <button data-jump="faqs">Basic FAQs</button>
+    </nav>
+  </div>
+
+  <section class="stepper-band" id="visa-process">
+    <div class="wrap">
+      <ol class="process-flow">
+        <li class="process-step">
+          <div class="step-mark"><span class="step-num">1</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-10.9 6.7L4 19.5l1.4-4.9A7.5 7.5 0 1 1 20 11.5Z" stroke="#141414" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 11h6M9 8.2h4" stroke="#141414" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Free consultation</h3>
+          <p>We check your profile, confirm the right VISA type and give you an honest read on timelines.</p>
+        </li>
+        <li class="process-step">
+          <div class="step-mark"><span class="step-num">2</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h7l4 4v14H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="#141414" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="#141414" stroke-width="1.7" stroke-linejoin="round"/><path d="m9.2 13.6 1.9 1.9 3.7-3.9" stroke="#141414" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Documents &amp; review</h3>
+          <p>You send what you have. We build the file, close the gaps and bulletproof the weak spots.</p>
+        </li>
+        <li class="process-step">
+          <div class="step-mark"><span class="step-num">3</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.2" y="5" width="17.6" height="16" rx="2.4" stroke="#141414" stroke-width="1.7"/><path d="M3.2 9.6h17.6M8.4 3v4M15.6 3v4" stroke="#141414" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="15" r="1.6" fill="#141414"/></svg>
+          </div>
+          <h3>Appointment booked</h3>
+          <p>We submit the application and lock the earliest slot available at your centre.</p>
+        </li>
+        <li class="process-step">
+          <div class="step-mark"><span class="step-num">4</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8.6" r="3.6" stroke="#141414" stroke-width="1.7"/><path d="M5 20c1.5-3.2 4.1-4.8 7-4.8s5.5 1.6 7 4.8" stroke="#141414" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Biometrics &amp; submission</h3>
+          <p>You attend in person. We brief you beforehand so nothing on the day is a surprise.</p>
+        </li>
+        <li class="process-step">
+          <div class="step-mark"><span class="step-num">5</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.5 3h11a1.5 1.5 0 0 1 1.5 1.5v15a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-15A1.5 1.5 0 0 1 6.5 3Z" stroke="#141414" stroke-width="1.7"/><circle cx="12" cy="10" r="2.8" stroke="#141414" stroke-width="1.7"/><path d="M9 16.4h6" stroke="#141414" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Decision &amp; passport</h3>
+          <p>We track the decision and tell you the moment your passport is ready to collect.</p>
+        </li>
+      </ol>
+      <div class="process-cta">
+        <button class="process-detail-link" data-action="process-detail">
+          <span class="btn-label">See the full step-by-step process for <span data-country-field="name">Switzerland</span></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="docs-embassy-band" id="documents">
+    <div class="wrap docs-embassy-row">
+      <div class="docs-embassy-left">
+        <div class="docs-grid">
+          <span>Document 1</span><span>Document 3</span><span>Document 5</span>
+          <span>Document 2</span><span>Document 4</span><span>Document 6</span>
+        </div>
+        <button class="docs-detail-link" data-action="doc-detail">
+          View the full document list by VISA type
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="embassy-bar" id="where-to-apply">
+          <div class="pin">
+            <!-- an application counter, not a map pin: this block names where the
+                 file is handed in, it does not plot it -->
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M3 9.4 12 4l9 5.4" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>
+              <path d="M5 10.6v7.6M9 10.6v7.6M15 10.6v7.6M19 10.6v7.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+              <path d="M3.2 20.4h17.6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="label">Where your application is submitted</div>
+        </div>
+      </div>
+      <div class="booking-card">
+        <div class="pill-title">Book A Call</div>
+        <form data-consult-form novalidate>
+          <div class="form-row"><label>Name</label><input type="text" name="name" data-field="name"></div>
+          <div class="field-error" data-error="name"></div>
+          <div class="form-row"><label>Contact No.</label><input type="tel" name="contact" data-field="contact"></div>
+          <div class="field-error" data-error="contact"></div>
+          <div class="form-row"><label>Email ID</label><input type="email" name="email" data-field="email"></div>
+          <div class="field-error" data-error="email"></div>
+          <div class="form-row"><label>Destination</label><div class="dest-field"><input type="text" name="country" data-field="country" autocomplete="off" placeholder="Type or pick" role="combobox" aria-autocomplete="list" aria-expanded="false"><button type="button" class="dest-toggle" tabindex="-1" aria-label="Show all destinations"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="m5 9 7 7 7-7" stroke="#141414" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="dest-dropdown"></div></div></div>
+          <div class="field-error" data-error="country"></div>
+          <label class="wa-optin">
+            <input type="checkbox" name="whatsapp" value="yes">
+            <span class="wa-box" aria-hidden="true"></span>
+            <span class="wa-text">Send me regular updates on WhatsApp</span>
+          </label>
+          <button type="submit" class="apply-btn">Apply Now</button>
+          <div class="form-success">Thanks! We'll call you shortly.</div>
+        </form>
+        <div class="booking-contacts">
+          <div class="booking-contacts-left">
+            <div class="contact-line"><a href="https://wa.me/911234567899" target="_blank" rel="noopener"><span class="icon-circle"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2.5C6.98 2.5 2.9 6.58 2.9 11.6c0 1.77.47 3.42 1.28 4.85L3 21.5l5.2-1.16a9.6 9.6 0 0 0 3.8.79c5.02 0 9.1-4.08 9.1-9.1S17.02 2.5 12 2.5Zm5.1 12.98c-.22.6-1.24 1.16-1.72 1.22-.44.06-1 .08-1.6-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.88-.13-.18-1.05-1.4-1.05-2.66s.66-1.88.9-2.14c.23-.26.51-.32.68-.32.17 0 .34.001.49.008.16.007.37-.06.58.44.22.52.73 1.79.8 1.92.07.13.11.28.02.46-.09.18-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.27-.11.52.15.26.68 1.14 1.47 1.85 1.01.9 1.87 1.19 2.13 1.32.26.13.42.11.57-.07.16-.17.65-.76.82-1.02.17-.26.35-.22.58-.13.23.09 1.48.7 1.73.83.26.13.43.19.49.3.07.12.07.68-.15 1.28Z" fill="#fff"/></svg></span>+91 1234567899</a></div>
+            <div class="contact-line"><a href="tel:+911234567899"><span class="icon-bare"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M7.5 3.5 9.8 8l-2 2.1a13.5 13.5 0 0 0 6.1 6.1l2.1-2 4.5 2.3v3.2a1.8 1.8 0 0 1-2 1.8C10.4 20.8 3.2 13.6 2.2 4.5A1.8 1.8 0 0 1 4 2.5h3.5Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg></span>+91 1234567899</a></div>
+          </div>
+          <div class="contact-line"><span class="icon-circle"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="#fff" stroke-width="1.8"/><path d="M12 6.6V12l3.4 2.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></span>10 A.M. to 8 P.M.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap faq-list" id="faqs">
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-text">How long does the VISA process take?</span> <span class="chev"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m5 9 7 7 7-7" stroke="#141414" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <div class="faq-a"><p>Processing time varies by destination and by season. For most Schengen countries the embassy takes roughly 10 to 15 working days once your appointment is done, though peak summer and December travel can stretch that further. The UK, USA and Canada work on their own timelines and can take several weeks depending on appointment availability in your city.</p><p>On our side, we usually have your documentation reviewed and packaged within 48 hours of receiving everything, and we book the earliest appointment slot available. Rush handling is available if you are working to a tight departure date — tell us the date and we will tell you honestly whether it is achievable before you pay.</p><p>You will get a status update from us at every stage, so you are never left guessing where your application stands.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-text">Can I apply for a VISA to <span data-country-field="name">Switzerland</span> if I have a prior VISA rejection?</span> <span class="chev"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m5 9 7 7 7-7" stroke="#141414" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <div class="faq-a"><p>Yes, absolutely. A previous rejection does not disqualify you, and it does not have to be disclosed as a permanent mark against you — but it does mean the next application needs to be noticeably stronger than the last one.</p><p>The first thing we do is read your rejection letter closely. Embassies issue a coded reason, and that code tells us precisely what went wrong: insufficient funds, unclear travel purpose, weak ties to your home country, or incomplete documentation. Most rejections come down to one or two fixable gaps rather than anything fundamental about you as an applicant.</p><p>From there we rebuild the application around that weakness — stronger financial evidence, a clearer day-by-day itinerary, better proof of your intent to return — and add a cover letter that addresses the earlier refusal directly rather than hoping the officer overlooks it.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-text">What should I do if I make a mistake on my VISA application?</span> <span class="chev"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m5 9 7 7 7-7" stroke="#141414" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <div class="faq-a"><p>Reach out to us as soon as you notice it. If the application has not been submitted yet, almost anything can be corrected at no cost — a spelling error in a name, a wrong passport number, an incorrect date of travel.</p><p>If it has already been submitted, the options depend on how far along it is. Before your biometrics appointment, corrections can usually still be made in person on the day. After submission to the embassy, minor clerical errors can often be raised through a written correction request, while a material error may mean withdrawing and reapplying.</p><p>Either way, do not try to fix it by submitting a second application in parallel — duplicate applications are a common cause of outright rejection. Call us first and we will tell you the cleanest route.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span class="faq-text">What should I do if I make a mistake on my VISA application?</span> <span class="chev"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="m5 9 7 7 7-7" stroke="#141414" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      <div class="faq-a"><p>Reach out to us as soon as you notice it. If the application has not been submitted yet, almost anything can be corrected at no cost — a spelling error in a name, a wrong passport number, an incorrect date of travel.</p><p>If it has already been submitted, the options depend on how far along it is. Before your biometrics appointment, corrections can usually still be made in person on the day. After submission to the embassy, minor clerical errors can often be raised through a written correction request, while a material error may mean withdrawing and reapplying.</p><p>Either way, do not try to fix it by submitting a second application in parallel — duplicate applications are a common cause of outright rejection. Call us first and we will tell you the cleanest route.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:36px;padding-bottom:36px;">
+    <div class="testimonial-viewport">
+      <div class="testimonial-track" id="country-testimonials"></div>
+    </div>
+  </section>
+
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- BLOG PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="blog">
+  <div data-slot="header"></div>
+
+  <section class="blog-hero wrap"><h1 style="font-size:32px;font-weight:800;">Check out the Viscraft Blog!</h1></section>
+
+  <nav class="tag-bar">
+    <div class="wrap tag-row" id="blog-tag-row"></div>
+  </nav>
+
+  <section class="wrap">
+    <div class="blog-list" id="blog-list"></div>
+  </section>
+
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- BLOG POST PAGE -->
+<!-- ============================================================ -->
+<main class="page" data-page="post">
+  <div data-slot="header"></div>
+  <section class="wrap post-body">
+    <button class="back-link" data-action="blog">← Back to Blog</button>
+    <div id="post-content"></div>
+  </section>
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- VISA PROCESS BREAKDOWN -->
+<!-- ============================================================ -->
+<main class="page" data-page="process">
+  <div data-slot="header"></div>
+  <section class="process-page-head">
+    <div class="wrap">
+      <button class="back-link" data-action="back-country"><span class="btn-label">← Back to <span data-country-field="name">Switzerland</span></span></button>
+      <h1>Applying for a <span data-country-field="name">Switzerland</span> VISA, step by step</h1>
+      <p class="sub">The same five stages as the summary, with what happens at each one — what we
+        handle, what we need from you, and roughly how long it takes.</p>
+    </div>
+  </section>
+  <section class="wrap stage-list" id="stage-list"></section>
+  <section class="wrap process-note">
+    <p>Timelines are typical rather than guaranteed — embassy processing varies by season and by
+      appointment availability in your city. Your consultant confirms the working plan for your
+      travel dates before you pay anything.</p>
+  </section>
+  <div data-slot="footer"></div>
+</main>
+
+<!-- ============================================================ -->
+<!-- DOCUMENTS BY VISA TYPE -->
+<!-- ============================================================ -->
+<main class="page" data-page="documents">
+  <div data-slot="header"></div>
+  <section class="docs-page-head">
+    <div class="wrap">
+      <button class="back-link" data-action="back-country"><span class="btn-label">← Back to <span data-country-field="name">Switzerland</span></span></button>
+      <h1><span data-country-field="name">Switzerland</span> — documents by VISA type</h1>
+      <p class="docs-page-sub">Everything we will ask you for, grouped by the VISA you are applying
+        for. Gather what you can and we will chase the rest with you.</p>
+    </div>
+  </section>
+  <section class="wrap docs-type-list" id="docs-type-list"></section>
+  <section class="wrap docs-note">
+    <p>Requirements are reviewed against the latest embassy guidance at the time you apply and can
+      change at short notice. Your assigned consultant confirms the final list before submission.</p>
+  </section>
+  <div data-slot="footer"></div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- DATA ---------------- */
+  /* The five stages of the process, expanded. Generic across every country —
+     the page swaps the country name in, nothing else. */
+  var PROCESS_STAGES = [
+    {
+      title:"Free consultation",
+      when:"Day 0",
+      body:"We start by working out which VISA you actually need and whether your profile is ready to apply. If something in your history is likely to cause trouble — a past refusal, a short employment record, thin bank statements — we would rather tell you now than after you have paid an embassy fee.",
+      we:["Confirm the right VISA category for your trip",
+          "Read any previous refusal letter and its coded reason",
+          "Give you an honest timeline for your travel dates",
+          "Flag anything that needs fixing before we start"],
+      you:["Tell us your travel dates and purpose",
+           "Share your passport and any previous VISA history",
+           "Mention any earlier refusal, however old"]
+    },
+    {
+      title:"Documents & review",
+      when:"Days 1–3",
+      body:"You send us what you already have and we build the file around it. Most applications fail on gaps rather than on the applicant, so this is the stage that does the heavy lifting: we check every document against current embassy guidance and rewrite the weak parts.",
+      we:["Check each document against the latest requirements",
+          "Draft your covering letter and day-wise itinerary",
+          "Review financials and advise if they fall short",
+          "Return a checklist of anything still missing"],
+      you:["Send your documents as you collect them",
+           "Arrange bank statements and tax returns",
+           "Confirm the itinerary reads the way you intend"]
+    },
+    {
+      title:"Application & appointment",
+      when:"Days 3–5",
+      body:"We complete and submit the online application, then book the earliest appointment slot available at your centre. Slots move quickly in peak season, so we hold one as soon as your file is ready rather than waiting for it to be perfect.",
+      we:["Fill and submit the online application form",
+          "Book the earliest appointment we can secure",
+          "Pay the embassy and service fees on your behalf",
+          "Send you the appointment letter and address"],
+      you:["Review the completed form before we submit",
+           "Confirm the appointment date works for you"]
+    },
+    {
+      title:"Biometrics & submission",
+      when:"Appointment day",
+      body:"You attend in person to give fingerprints and a photograph, and to hand over the file. We brief you the day before so you know exactly what to carry and what you may be asked — nothing on the day should be a surprise.",
+      we:["Brief you on what to carry and what to expect",
+          "Assemble the file in the order the centre wants it",
+          "Stay reachable by phone through your appointment"],
+      you:["Attend the appointment with your passport",
+           "Carry the original documents, not only copies",
+           "Arrive early — late arrivals are usually turned away"]
+    },
+    {
+      title:"Decision & passport",
+      when:"Typically 10–15 working days",
+      body:"The embassy processes the application and returns your passport to the centre. We track the status daily and tell you the moment it is ready. If the decision does not go your way, we read the refusal reason with you and plan the reapplication.",
+      we:["Track the application status daily",
+          "Tell you as soon as the passport is ready",
+          "Read any refusal reason and plan the next step"],
+      you:["Collect the passport, or nominate someone to",
+           "Check the VISA dates against your travel plans"]
+    }
+  ];
+
+  /* Documents required, grouped by the VISA being applied for. Common to every
+     country for now; move onto DESTINATIONS when per-country lists are supplied. */
+  var VISA_DOC_TYPES = [
+    {
+      type:"Tourist / Visitor VISA",
+      note:"For holidays, sightseeing and visiting friends or family.",
+      docs:["Passport valid 6+ months with two blank pages",
+            "Completed and signed application form",
+            "Two recent photographs to embassy specification",
+            "Confirmed return flight booking",
+            "Hotel bookings for the full stay",
+            "Bank statements for the last 6 months",
+            "Income tax returns for the last 2 years",
+            "Covering letter stating purpose and itinerary",
+            "Travel medical insurance for the full stay"]
+    },
+    {
+      type:"Business VISA",
+      note:"For meetings, conferences, trade fairs and supplier visits.",
+      docs:["Passport valid 6+ months with two blank pages",
+            "Completed and signed application form",
+            "Two recent photographs to embassy specification",
+            "Invitation letter from the host company",
+            "Covering letter from your employer on letterhead",
+            "Company registration or incorporation proof",
+            "Bank statements for the last 6 months",
+            "Income tax returns for the last 2 years",
+            "Confirmed flight and hotel bookings",
+            "Travel medical insurance for the full stay"]
+    }
+  ];
+
+  /* ------------------------------------------------------------------
+     DESTINATIONS — the single source of truth.
+
+     Every destination here gets a country page, appears in the header
+     search, shows up as a card on the home carousel and is selectable in
+     the consultation forms. Add one entry and all four pick it up.
+
+     Order follows the brief for the consultation form: the three Asia-
+     Pacific/East entries, then the 29 Schengen member states inline, then
+     the remaining English-speaking destinations. Schengen states share one
+     price because they share one visa and one process.
+     ------------------------------------------------------------------ */
+  var SCHENGEN_PRICE = "4,499";
+
+  var DESTINATIONS = [
+    {slug:"new-zealand",   name:"New Zealand",   price:"4,799"},
+    {slug:"china",         name:"China",         price:"3,799"},
+    {slug:"japan",         name:"Japan",         price:"3,999"},
+
+    /* --- Schengen Area --- */
+    {slug:"austria",       name:"Austria",       price:SCHENGEN_PRICE},
+    {slug:"belgium",       name:"Belgium",       price:SCHENGEN_PRICE},
+    {slug:"bulgaria",      name:"Bulgaria",      price:SCHENGEN_PRICE},
+    {slug:"croatia",       name:"Croatia",       price:SCHENGEN_PRICE},
+    {slug:"czech-republic",name:"Czech Republic", price:SCHENGEN_PRICE},
+    {slug:"denmark",       name:"Denmark",       price:SCHENGEN_PRICE},
+    {slug:"estonia",       name:"Estonia",       price:SCHENGEN_PRICE},
+    {slug:"finland",       name:"Finland",       price:SCHENGEN_PRICE},
+    {slug:"france",        name:"France",        price:SCHENGEN_PRICE},
+    {slug:"germany",       name:"Germany",       price:SCHENGEN_PRICE},
+    {slug:"greece",        name:"Greece",        price:SCHENGEN_PRICE},
+    {slug:"hungary",       name:"Hungary",       price:SCHENGEN_PRICE},
+    {slug:"iceland",       name:"Iceland",       price:SCHENGEN_PRICE},
+    {slug:"italy",         name:"Italy",         price:SCHENGEN_PRICE},
+    {slug:"latvia",        name:"Latvia",        price:SCHENGEN_PRICE},
+    {slug:"liechtenstein", name:"Liechtenstein", price:SCHENGEN_PRICE},
+    {slug:"lithuania",     name:"Lithuania",     price:SCHENGEN_PRICE},
+    {slug:"luxembourg",    name:"Luxembourg",    price:SCHENGEN_PRICE},
+    {slug:"malta",         name:"Malta",         price:SCHENGEN_PRICE},
+    {slug:"netherlands",   name:"Netherlands",   price:SCHENGEN_PRICE},
+    {slug:"norway",        name:"Norway",        price:SCHENGEN_PRICE},
+    {slug:"poland",        name:"Poland",        price:SCHENGEN_PRICE},
+    {slug:"portugal",      name:"Portugal",      price:SCHENGEN_PRICE},
+    {slug:"romania",       name:"Romania",       price:SCHENGEN_PRICE},
+    {slug:"slovakia",      name:"Slovakia",      price:SCHENGEN_PRICE},
+    {slug:"slovenia",      name:"Slovenia",      price:SCHENGEN_PRICE},
+    {slug:"spain",         name:"Spain",         price:SCHENGEN_PRICE},
+    {slug:"sweden",        name:"Sweden",        price:SCHENGEN_PRICE},
+    {slug:"switzerland",   name:"Switzerland",   price:SCHENGEN_PRICE},
+
+    {slug:"australia",      name:"Australia",    price:"4,299"},
+    {slug:"united-kingdom", name:"UK",           price:"3,499"},
+    {slug:"ireland",        name:"Ireland",      price:"4,199"},
+    {slug:"canada",         name:"Canada",       price:"4,999"},
+    {slug:"usa",            name:"USA",          price:"5,499"}
+  ];
+
+  /* Search results + country pages */
+  var COUNTRIES = DESTINATIONS;
+  /* Home carousel — every destination gets a card */
+  var HOME_CARDS = DESTINATIONS;
+  /* Consultation-form picker — names only, same order */
+  var FORM_DESTINATIONS = DESTINATIONS.map(function(d){ return d.name; });
+
+  var TESTIMONIALS = [
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"},
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"},
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"},
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"},
+    {quote:"I had an earlier rejection on the Schengen VISA when I used some other travel agent. They took on my case and went all out to ensure I get the visa.", name:"Chirag Goel"}
+  ];
+
+  var TAGS = ["Schengen 101","Travel Stories","Places to Visit","Travel Must Knows"];
+
+  var BLOG_POSTS = [
+    {
+      slug:"visa-rejected-dont-lose-hope",
+      title:"VISA Rejected? Don't lose hope yet!",
+      subtitle:"A comprehensive guide for applications.",
+      excerpt:"A comprehensive guide for applications.",
+      tags:["Travel Must Knows"],
+      author:"Akhil Nair", date:"Sep 21, 2026",
+      body:"A visa rejection is not the end of the road. In most cases it comes down to a handful of fixable gaps — missing financial proof, an inconsistent travel history, or a weak cover letter. This guide walks through the most common rejection reasons and exactly how to address each one before you reapply."
+    },
+    {
+      slug:"schengen-visa-101",
+      title:"Schengen VISA 101",
+      subtitle:"What you can do to make your application bulletproof.",
+      excerpt:"The Schengen VISA can be complex when applying for the very first time in a few scenarios. Here's a breakdown of what you can do in case you have any of these issues in your application…",
+      tags:["Schengen 101","Travel Must Knows"],
+      author:"Akhil Nair", date:"Sep 21, 2026",
+      body:"The Schengen VISA can be complex when applying for the very first time in a few scenarios. Here's a breakdown of what you can do in case you have any of these issues in your application: incomplete financial documentation, unclear travel itineraries, or insufficient travel insurance. Each of these has a straightforward fix once you know what the embassy is actually checking for."
+    },
+    {
+      slug:"viscraft-visa-index",
+      title:"Viscraft VISA Index",
+      subtitle:"Know where your passport stands.",
+      excerpt:"Know where your passport stands.",
+      tags:["Places to Visit"],
+      author:"Akhil Nair", date:"Sep 21, 2026",
+      body:"Every passport opens a different set of doors. Our VISA Index breaks down visa-free access, visa-on-arrival options, and processing complexity for over 190 destinations, so you always know exactly where you stand before you plan your next trip."
+    },
+    {
+      slug:"first-time-solo-travel-stories",
+      title:"Solo, Not Alone",
+      subtitle:"Real stories from first-time solo travellers.",
+      excerpt:"Real stories from first-time solo travellers.",
+      tags:["Travel Stories"],
+      author:"Akhil Nair", date:"Sep 14, 2026",
+      body:"We asked five first-time solo travellers what surprised them most about being on the road alone. From the freedom of an unplanned afternoon to the friends made over a shared table, here's what they wish they'd known before they left."
+    },
+    {
+      slug:"underrated-europe-stops",
+      title:"Skip the Crowds",
+      subtitle:"Underrated stops across Europe worth the detour.",
+      excerpt:"Underrated stops across Europe worth the detour.",
+      tags:["Places to Visit"],
+      author:"Akhil Nair", date:"Sep 8, 2026",
+      body:"Beyond the usual capitals, Europe hides a handful of towns that rarely make the itinerary — and that's exactly why they're worth the detour. Here are five places to add to your next Schengen trip."
+    },
+    {
+      slug:"packing-for-a-visa-interview",
+      title:"The Interview Checklist",
+      subtitle:"Exactly what to carry to your VISA appointment.",
+      excerpt:"Exactly what to carry to your VISA appointment.",
+      tags:["Travel Must Knows","Schengen 101"],
+      author:"Akhil Nair", date:"Sep 2, 2026",
+      body:"Walking into a VISA appointment under-prepared is one of the most common (and avoidable) reasons for delay. Here's the exact checklist our team hands every client before their interview."
+    },
+    {
+      slug:"travel-insurance-explained",
+      title:"Travel Insurance, Decoded",
+      subtitle:"What cover you actually need for a Schengen visa.",
+      excerpt:"What cover you actually need for a Schengen visa.",
+      tags:["Schengen 101","Travel Must Knows"],
+      author:"Akhil Nair", date:"Aug 26, 2026",
+      body:"Schengen applications require a minimum level of medical cover, but the policies sold to travellers vary widely in what they actually include. Here's how to read a policy and make sure it clears the embassy's bar."
+    },
+    {
+      slug:"first-trip-abroad-mistakes",
+      title:"First Trip Abroad?",
+      subtitle:"The small mistakes that cost travellers the most.",
+      excerpt:"The small mistakes that cost travellers the most.",
+      tags:["Travel Stories","Travel Must Knows"],
+      author:"Akhil Nair", date:"Aug 19, 2026",
+      body:"From forex margins to airport transfer scams, the things that catch out first-time travellers are rarely the big ones. Here are the small, avoidable mistakes we see most often — and how to sidestep them."
+    }
+  ];
+
+  var state = { activeTags: new Set(), currentCountrySlug: "switzerland" };
+
+  /* ---------------- HEADER / FOOTER INJECTION ---------------- */
+  var headerTpl = document.getElementById("tpl-header");
+  var footerTpl = document.getElementById("tpl-footer");
+  document.querySelectorAll('[data-slot="header"]').forEach(function(slot){
+    slot.replaceWith(headerTpl.content.cloneNode(true));
+  });
+  document.querySelectorAll('[data-slot="footer"]').forEach(function(slot){
+    var selfRefresh = slot.getAttribute("data-self-refresh");
+    var frag = footerTpl.content.cloneNode(true);
+    if (selfRefresh){
+      var aboutBtn = frag.querySelector('[data-action="about"]');
+      if (aboutBtn){ aboutBtn.setAttribute("data-self-refresh-page", selfRefresh); }
+    }
+    slot.replaceWith(frag);
+  });
+
+  /* ---------------- ROUTING ---------------- */
+  var PAGES = ["home","about","services","country","blog","post","documents","process"];
+
+  function currentPageName(){
+    var active = document.querySelector(".page.active");
+    return active ? active.getAttribute("data-page") : null;
+  }
+
+  function showPage(name){
+    document.querySelectorAll(".page").forEach(function(p){
+      p.classList.toggle("active", p.getAttribute("data-page") === name);
+    });
+    window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+    /* carousels and the flight path can only be measured once visible */
+    if (name === "home"){
+      requestAnimationFrame(function(){
+        var cc = document.getElementById("home-countries");
+        if (cc && cc.dataset.hloopBound === "1"){ primeHLoop(cc, HOME_CARDS.length); }
+        var bc = document.getElementById("home-blog");
+        if (bc && bc.dataset.hloopBound === "1"){ primeHLoop(bc, BLOG_POSTS.length); }
+      });
+    }
+    if (name === "services"){
+      requestAnimationFrame(function(){ if (window.__journey) window.__journey.refresh(); });
+    }
+  }
+
+  function parseHash(){
+    var raw = (location.hash || "#home").replace("#","");
+    var parts = raw.split("/");
+    return {page: parts[0] || "home", param: parts[1] || null};
+  }
+
+  function renderRoute(){
+    var r = parseHash();
+    var page = PAGES.indexOf(r.page) !== -1 ? r.page : "home";
+    if (page === "country"){
+      setCountry(r.param || state.currentCountrySlug);
+    }
+    if (page === "process"){
+      setCountry(r.param || state.currentCountrySlug);
+      renderProcessStages();
+    }
+    if (page === "documents"){
+      /* the page reuses the country name fields, so the country must be set
+         before it is shown */
+      setCountry(r.param || state.currentCountrySlug);
+      renderVisaDocTypes();
+    }
+    if (page === "post"){
+      renderPost(r.param);
+    }
+    if (page === "blog"){
+      renderBlogList();
+    }
+    showPage(page);
+    highlightNav(page);
+  }
+
+  function goTo(page, param){
+    var target = "#" + page + (param ? "/" + param : "");
+    if (location.hash === target){
+      renderRoute();
+    } else {
+      location.hash = target;
+    }
+  }
+
+  window.addEventListener("hashchange", renderRoute);
+
+  /* nav-button self-refresh vs navigate */
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    var action = btn.getAttribute("data-action");
+    var cur = currentPageName();
+
+    if (action === "logo"){
+      if (cur === "home"){ location.reload(); } else { goTo("home"); }
+      return;
+    }
+    if (action === "process-detail"){
+      goTo("process", state.currentCountrySlug);
+      return;
+    }
+    if (action === "doc-detail"){
+      goTo("documents", state.currentCountrySlug);
+      return;
+    }
+    if (action === "back-country"){
+      goTo("country", state.currentCountrySlug);
+      return;
+    }
+    if (action === "contact"){
+      var footer = document.querySelector('main.page.active [id="site-footer"]') ||
+                   document.querySelector('main.page.active footer.site-footer');
+      if (footer){ footer.scrollIntoView({behavior:"smooth"}); }
+      return;
+    }
+    if (action === "services" || action === "blog"){
+      if (cur === action){ location.reload(); } else { goTo(action); }
+      return;
+    }
+    if (action === "about"){
+      if (btn.hasAttribute("data-self-refresh-page") && cur === "about"){
+        location.reload();
+      } else {
+        goTo("about");
+      }
+      return;
+    }
+  });
+
+  function highlightNav(page){
+    // (kept minimal — header nav has no persistent active state in the wireframes)
+  }
+
+  /* ---------------- MOBILE MENU + FOOTER ACCORDION ---------------- */
+  /* Header links collapse behind a menu button on small screens; footer
+     headings become tap-to-expand sections. Both are delegated so they work
+     for the header/footer copies injected into every page. */
+  document.addEventListener("click", function(e){
+    var toggle = e.target.closest(".nav-toggle");
+    if (toggle){
+      var menu = toggle.parentElement.querySelector(".nav-links");
+      var open = menu.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      return;
+    }
+    /* a choice inside the menu closes it */
+    var inMenu = e.target.closest(".nav-links button");
+    if (inMenu){
+      var panel = inMenu.closest(".nav-links");
+      panel.classList.remove("open");
+      var t = panel.parentElement.querySelector(".nav-toggle");
+      if (t){ t.setAttribute("aria-expanded", "false"); t.setAttribute("aria-label", "Open menu"); }
+      return;
+    }
+    /* tapping anywhere else closes any open menu */
+    if (!e.target.closest(".nav-links")){
+      document.querySelectorAll(".nav-links.open").forEach(function(m){
+        m.classList.remove("open");
+        var t = m.parentElement.querySelector(".nav-toggle");
+        if (t){ t.setAttribute("aria-expanded", "false"); t.setAttribute("aria-label", "Open menu"); }
+      });
+    }
+
+    var head = e.target.closest(".footer-toggle");
+    if (head){
+      var col = head.parentElement;
+      var isOpen = col.classList.toggle("open");
+      head.setAttribute("aria-expanded", String(isOpen));
+    }
+  });
+
+  /* keyboard support for the footer headings */
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Enter" && e.key !== " ") return;
+    var head = e.target.closest && e.target.closest(".footer-toggle");
+    if (!head) return;
+    e.preventDefault();
+    var col = head.parentElement;
+    head.setAttribute("aria-expanded", String(col.classList.toggle("open")));
+  });
+
+  /* ---------------- SEARCH ---------------- */
+  document.querySelectorAll(".country-search-input").forEach(function(input){
+    var dropdown = input.closest(".search-wrap").querySelector(".search-dropdown");
+
+    /* index of the option the arrow keys are sitting on; -1 = none */
+    var active = -1;
+
+    function options(){ return dropdown.querySelectorAll("button"); }
+
+    function paint(){
+      var opts = options();
+      for (var i = 0; i < opts.length; i++){
+        var on = (i === active);
+        opts[i].classList.toggle("active", on);
+        opts[i].setAttribute("aria-selected", String(on));
+        /* keep the highlighted option inside the scrollable dropdown */
+        if (on && opts[i].scrollIntoView){ opts[i].scrollIntoView({block:"nearest"}); }
+      }
+    }
+
+    function close(){
+      dropdown.classList.remove("show");
+      input.setAttribute("aria-expanded", "false");
+      active = -1;
+    }
+
+    function choose(slug){
+      input.value = "";
+      close();
+      renderResults();
+      goTo("country", slug);
+    }
+
+    function renderResults(){
+      var q = input.value.trim().toLowerCase();
+      active = -1;
+      if (!q){ close(); dropdown.innerHTML = ""; return; }
+      var matches = COUNTRIES.filter(function(c){ return c.name.toLowerCase().indexOf(q) !== -1; });
+      dropdown.innerHTML = "";
+      if (!matches.length){
+        var empty = document.createElement("div");
+        empty.className = "empty";
+        empty.style.padding = "12px 20px";
+        empty.textContent = "No countries found";
+        dropdown.appendChild(empty);
+      } else {
+        matches.forEach(function(c){
+          var b = document.createElement("button");
+          b.type = "button";
+          b.setAttribute("role", "option");
+          b.textContent = c.name;
+          b.addEventListener("click", function(){ choose(c.slug); });
+          /* pointer and keyboard share one notion of "active" so the two
+             never light up different rows at the same time */
+          b.addEventListener("mousemove", function(){
+            active = [].indexOf.call(options(), b);
+            paint();
+          });
+          dropdown.appendChild(b);
+        });
+      }
+      dropdown.classList.add("show");
+      input.setAttribute("aria-expanded", "true");
+    }
+
+    input.addEventListener("keydown", function(e){
+      var key = e.key;
+      var open = dropdown.classList.contains("show");
+      var opts = options();
+
+      if (key === "ArrowDown" || key === "ArrowUp"){
+        /* arrowing while closed re-opens the list rather than doing nothing */
+        if (!open || !opts.length){ renderResults(); opts = options(); }
+        if (!opts.length) return;
+        e.preventDefault();                      /* stop the caret jumping */
+        if (key === "ArrowDown"){ active = (active + 1) % opts.length; }
+        else { active = (active <= 0 ? opts.length : active) - 1; }
+        paint();
+        return;
+      }
+      if (key === "Enter"){
+        if (open && active > -1 && opts[active]){ e.preventDefault(); opts[active].click(); }
+        else if (open && opts.length === 1){ e.preventDefault(); opts[0].click(); }
+        return;
+      }
+      if (key === "Escape"){ close(); return; }
+      if (key === "Tab"){ close(); }
+    });
+
+    input.addEventListener("input", renderResults);
+    input.addEventListener("focus", renderResults);
+    document.addEventListener("click", function(e){
+      if (!e.target.closest(".search-wrap")){ close(); }
+    });
+  });
+
+  /* ---------------- SCROLLERS ---------------- */
+  /* Animate the track to an exact pixel position (no wrapping mid-flight —
+     callers pre-normalise so the target is always a real, in-range card). */
+  function scrollTrackTo(track, target, duration){
+    if (track._scrollAnim){ cancelAnimationFrame(track._scrollAnim); }
+    var start = track.scrollLeft;
+    var startTime = null;
+    function frame(ts){
+      if (startTime === null){ startTime = ts; }
+      var t = Math.min((ts - startTime) / duration, 1);
+      var eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      track.scrollLeft = start + (target - start) * eased;
+      if (t < 1){ track._scrollAnim = requestAnimationFrame(frame); }
+      else {
+        track.scrollLeft = target; /* land exactly on the card */
+        track._scrollAnim = null;
+      }
+    }
+    track._scrollAnim = requestAnimationFrame(frame);
+  }
+
+  /* Offset that puts card `i` flush against the left edge of the viewport. */
+  function cardOffset(track, i){
+    return track.children[i].offsetLeft - track.children[0].offsetLeft;
+  }
+
+  /* Which card is currently flush left (nearest match). */
+  function currentIndex(track){
+    var cards = track.children, best = 0, bestDist = Infinity;
+    for (var i = 0; i < cards.length; i++){
+      var d = Math.abs(cardOffset(track, i) - track.scrollLeft);
+      if (d < bestDist){ bestDist = d; best = i; }
+    }
+    return best;
+  }
+
+  function pageTrack(track, dir){
+    var itemCount = parseInt(track.dataset.itemCount || "0", 10);
+    var perView = parseInt(track.dataset.perView || "1", 10);
+    if (!itemCount) return;
+
+    var idx = currentIndex(track);
+    /* Normalise into the first copy, then (for a leftward move) jump forward
+       one whole set so there is always room to page without running off the
+       start. Both jumps are invisible — the two copies are identical. */
+    if (idx >= itemCount){
+      idx -= itemCount;
+      track.scrollLeft = cardOffset(track, idx);
+    }
+    if (dir < 0 && idx - perView < 0){
+      idx += itemCount;
+      track.scrollLeft = cardOffset(track, idx);
+    }
+    var targetIdx = idx + dir * perView;
+    scrollTrackTo(track, cardOffset(track, targetIdx), 320);
+  }
+
+  document.querySelectorAll("[data-scroll]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var dir = parseInt(btn.getAttribute("data-dir"), 10);
+      var el = document.getElementById(btn.getAttribute("data-scroll"));
+      if (el){ pageTrack(el, dir); }
+    });
+  });
+
+  function svgGlobe(){
+    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3Z" stroke="#fff" stroke-width="1.6"/></svg>';
+  }
+  function svgAvatar(){
+    return '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="10" r="3.4" stroke="#fff" stroke-width="1.5"/><path d="M5.5 19c1.3-2.6 3.8-4 6.5-4s5.2 1.4 6.5 4" stroke="#fff" stroke-width="1.5"/></svg>';
+  }
+
+  /* -- horizontal infinite loop (country cards, blog cards) --
+     The list is rendered twice; `itemCount` is the ORIGINAL length. All
+     positions come from real card offsets, never from a multiplied pitch. */
+  function setupInfiniteHLoop(track, itemCount){
+    if (track.dataset.hloopBound === "1"){ requestAnimationFrame(function(){ primeHLoop(track, itemCount); }); return; }
+    track.dataset.hloopBound = "1";
+    track.addEventListener("scroll", function(){
+      if (track._scrollAnim){ return; } /* paging owns the position while animating */
+      var single = parseFloat(track.dataset.singleWidth || "0");
+      if (!single) return;
+      if (track.scrollLeft >= single){
+        track.scrollLeft -= single;
+      } else if (track.scrollLeft <= 0){
+        track.scrollLeft += single;
+      }
+    });
+    requestAnimationFrame(function(){ primeHLoop(track, itemCount); });
+  }
+  function primeHLoop(track, itemCount){
+    var cards = track.children;
+    if (cards.length < 2){ return; }
+    var pitch = cardOffset(track, 1);
+    /* A hidden page (display:none) has no layout, so every measurement is 0.
+       Bail out rather than dividing by zero — re-primed once it is shown. */
+    if (!pitch || !track.clientWidth){ return; }
+    var perView = Math.max(1, Math.round(track.clientWidth / pitch));
+    /* exact width of one full set, measured from the DOM */
+    var single = cardOffset(track, itemCount);
+    track.dataset.itemCount = itemCount;
+    track.dataset.perView = perView;
+    track.dataset.singleWidth = single;
+    /* Open on the head of the list, not the middle of it — the first cards a
+       visitor sees should be the headline destinations. Both directions still
+       have a full set of runway because the list is rendered twice, and
+       pageTrack() jumps a whole set when it needs room to move left. */
+    track.scrollLeft = cardOffset(track, 0);
+  }
+
+  function renderHomeCards(){
+    var track = document.getElementById("home-countries");
+    if (!track) return;
+    track.innerHTML = "";
+    var loopList = HOME_CARDS.concat(HOME_CARDS);
+    loopList.forEach(function(c){
+      var el = document.createElement("div");
+      el.className = "country-card";
+      el.innerHTML = '<div class="thumb"></div><div class="price">Starting INR ' + c.price + '</div><div class="name">' + svgGlobe() + c.name + '</div>';
+      el.addEventListener("click", function(){ goTo("country", c.slug); });
+      track.appendChild(el);
+    });
+    setupInfiniteHLoop(track, HOME_CARDS.length);
+  }
+
+  function renderHomeBlogTeaser(){
+    var track = document.getElementById("home-blog");
+    if (!track) return;
+    track.innerHTML = "";
+    var loopList = BLOG_POSTS.concat(BLOG_POSTS);
+    loopList.forEach(function(p){
+      var el = document.createElement("div");
+      el.className = "blog-teaser-card";
+      el.innerHTML = "<h4>" + p.title + "</h4><p>" + p.subtitle + "</p>";
+      el.addEventListener("click", function(){ goTo("post", p.slug); });
+      track.appendChild(el);
+    });
+    setupInfiniteHLoop(track, BLOG_POSTS.length);
+  }
+
+  /* -- vertical autoplay loop (testimonials) -- */
+  function renderTestimonials(containerId){
+    var track = document.getElementById(containerId);
+    if (!track) return;
+    track.innerHTML = "";
+    var loopList = TESTIMONIALS.concat(TESTIMONIALS);
+    loopList.forEach(function(t){
+      var el = document.createElement("div");
+      el.className = "testimonial-card";
+      el.innerHTML = '<p>&ldquo;' + t.quote + '&rdquo;</p><div class="testimonial-name">' + svgAvatar() + t.name + '</div>';
+      track.appendChild(el);
+    });
+    setupAutoScroll(track);
+  }
+
+  var AUTOSCROLL_SPEED = 26; /* px per second — a readable pace */
+
+  function setupAutoScroll(track){
+    requestAnimationFrame(function(){
+      var singleHeight = track.scrollHeight / 2;
+      track.dataset.singleHeight = singleHeight;
+      track.dataset.offset = "0";
+      track.style.transform = "translateY(0px)";
+
+      if (track.dataset.autoBound === "1") return;
+      track.dataset.autoBound = "1";
+
+      var viewport = track.parentElement;
+      viewport.addEventListener("mouseenter", function(){ track.dataset.paused = "1"; });
+      viewport.addEventListener("mouseleave", function(){ track.dataset.paused = "0"; });
+
+      var last = null;
+      function step(ts){
+        if (last === null){ last = ts; }
+        var dt = (ts - last) / 1000;
+        last = ts;
+        var single = parseFloat(track.dataset.singleHeight || "0");
+        if (single && track.dataset.paused !== "1"){
+          var offset = parseFloat(track.dataset.offset || "0") + AUTOSCROLL_SPEED * dt;
+          if (offset >= single){ offset -= single; }
+          track.dataset.offset = offset;
+          track.style.transform = "translateY(-" + offset + "px)";
+        }
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  window.addEventListener("resize", function(){
+    ["home-testimonials","country-testimonials"].forEach(function(id){
+      var t = document.getElementById(id);
+      if (t && t.dataset.autoBound === "1"){ t.dataset.singleHeight = t.scrollHeight / 2; }
+    });
+    var t1 = document.getElementById("home-countries");
+    if (t1 && t1.dataset.hloopBound === "1"){ primeHLoop(t1, HOME_CARDS.length); }
+    var t2 = document.getElementById("home-blog");
+    if (t2 && t2.dataset.hloopBound === "1"){ primeHLoop(t2, BLOG_POSTS.length); }
+  });
+
+  /* ---------------- COUNTRY PAGE ---------------- */
+  /* ---------------- PROCESS BREAKDOWN ---------------- */
+  function renderProcessStages(){
+    var host = document.getElementById("stage-list");
+    if (!host || host.dataset.built === "1") return;
+
+    function list(items){
+      var ul = document.createElement("ul");
+      items.forEach(function(t){
+        var li = document.createElement("li");
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+    function panel(heading, items){
+      var sec = document.createElement("section");
+      var h = document.createElement("h4");
+      h.textContent = heading;
+      sec.appendChild(h);
+      sec.appendChild(list(items));
+      return sec;
+    }
+
+    PROCESS_STAGES.forEach(function(st, i){
+      var card = document.createElement("article");
+      card.className = "stage-card";
+
+      var head = document.createElement("div");
+      head.className = "stage-head";
+      var title = document.createElement("div");
+      title.className = "pill-title";
+      title.textContent = (i + 1) + ". " + st.title;
+      var when = document.createElement("span");
+      when.className = "stage-when";
+      when.textContent = st.when;
+      head.appendChild(title);
+      head.appendChild(when);
+
+      var body = document.createElement("p");
+      body.className = "stage-body";
+      body.textContent = st.body;
+
+      var split = document.createElement("div");
+      split.className = "stage-split";
+      split.appendChild(panel("What we do", st.we));
+      split.appendChild(panel("What we need from you", st.you));
+
+      card.appendChild(head);
+      card.appendChild(body);
+      card.appendChild(split);
+      host.appendChild(card);
+    });
+    host.dataset.built = "1";
+  }
+
+  /* ---------------- DOCUMENTS BY VISA TYPE ---------------- */
+  function renderVisaDocTypes(){
+    var host = document.getElementById("docs-type-list");
+    if (!host || host.dataset.built === "1") return;
+    VISA_DOC_TYPES.forEach(function(t){
+      var card = document.createElement("article");
+      card.className = "docs-type-card";
+      var title = document.createElement("div");
+      title.className = "pill-title";
+      title.textContent = t.type;
+      var note = document.createElement("p");
+      note.className = "type-note";
+      note.textContent = t.note;
+      var list = document.createElement("ul");
+      t.docs.forEach(function(d){
+        var li = document.createElement("li");
+        li.textContent = d;
+        list.appendChild(li);
+      });
+      card.appendChild(title);
+      card.appendChild(note);
+      card.appendChild(list);
+      host.appendChild(card);
+    });
+    host.dataset.built = "1";
+  }
+
+  function setCountry(slug){
+    var c = COUNTRIES.find(function(x){ return x.slug === slug; }) || COUNTRIES[0];
+    state.currentCountrySlug = c.slug;
+    document.querySelectorAll('[data-country-field="name"]').forEach(function(el){ el.textContent = c.name; });
+    document.querySelectorAll('[data-country-field="priceline"]').forEach(function(el){ el.textContent = "Starting INR " + c.price; });
+    renderTestimonials("country-testimonials");
+  }
+
+  (function setupCountryTabsAndStepper(){
+    var countryPage = document.querySelector('main[data-page="country"]');
+    if (!countryPage) return;
+    var band = countryPage.querySelector(".country-tabs-band");
+    var tabs = countryPage.querySelectorAll(".country-tabs button");
+    var sections = Array.prototype.map.call(tabs, function(t){ return document.getElementById(t.getAttribute("data-jump")); });
+
+    /* The tab bar is sticky at the top of the viewport, so scrolling a section
+       to y=0 hides its first ~100px behind the bar. Offset every jump by the
+       bar's live height (it changes when the tabs wrap on narrow screens). */
+    function navOffset(){
+      return (band ? band.offsetHeight : 0) + 12;
+    }
+    function sectionTop(el){
+      return window.pageYOffset + el.getBoundingClientRect().top - navOffset();
+    }
+
+    tabs.forEach(function(tab){
+      tab.addEventListener("click", function(){
+        var target = document.getElementById(tab.getAttribute("data-jump"));
+        if (!target) return;
+        window.scrollTo({top: Math.max(0, sectionTop(target)), behavior:"smooth"});
+      });
+    });
+
+    /* Active tab from scroll position: the targets are nested (embassy sits
+       inside the documents band), so an IntersectionObserver fires for both. */
+    function syncActiveTab(){
+      if (!countryPage.classList.contains("active")) return;
+      var marker = window.pageYOffset + navOffset() + 4;
+      var idx = 0;
+      sections.forEach(function(s, i){
+        if (s && window.pageYOffset + s.getBoundingClientRect().top <= marker){ idx = i; }
+      });
+      tabs.forEach(function(t, i){ t.classList.toggle("active", i === idx); });
+    }
+    window.addEventListener("scroll", syncActiveTab, {passive:true});
+    window.addEventListener("resize", syncActiveTab);
+    syncActiveTab();
+  })();
+
+  /* ---------------- SERVICES: flight path + plane ---------------- */
+  /* The path is drawn from the cards' real positions so it always connects
+     them, whatever the layout does. The plane then flies along that path in
+     step with how far the section has been scrolled. */
+  var journey = (function(){
+    var wrap = document.getElementById("service-journey");
+    if (!wrap) return null;
+    var svgLines = wrap.querySelector(".journey-svg--lines");
+    var svgPlane = wrap.querySelector(".journey-svg--plane");
+    var line  = wrap.querySelector(".journey-line");
+    var trail = wrap.querySelector(".journey-trail");
+    var plane = wrap.querySelector(".journey-plane");
+    /* ordered by journey step, not DOM order (the cards sit in two columns) */
+    var cards = [1,2,3,4].map(function(n){
+      return wrap.querySelector('.journey-card[data-stop="' + n + '"]');
+    });
+    var length = 0;
+    var stacked = false;
+
+    function build(){
+      if (cards.length < 4 || !cards[3]) return false;
+      var W = wrap.clientWidth, H = wrap.clientHeight;
+      if (!W || !H) return false;                 /* hidden page: no layout yet */
+      if (getComputedStyle(svgLines).display === "none") return false;
+      svgLines.setAttribute("viewBox", "0 0 " + W + " " + H);
+      svgPlane.setAttribute("viewBox", "0 0 " + W + " " + H);
+
+      /* A straight runway that starts above the first stop and runs past the
+         last one, stopping short of the next heading. Two columns put it down
+         the centre gutter; once they stack it becomes a rail to their left. */
+      var base = wrap.getBoundingClientRect();
+      var top    = cards[0].getBoundingClientRect().top - base.top - 56;
+      var bottom = cards[3].getBoundingClientRect().bottom - base.top + 64;
+      var r0 = cards[0].getBoundingClientRect(), r1 = cards[1].getBoundingClientRect();
+      stacked = Math.abs(r0.left - r1.left) < 2;
+      var midX = stacked ? Math.max(14, (r0.left - base.left) / 2) : W / 2;
+      var path = "M " + midX + " " + top + " L " + midX + " " + bottom;
+
+      line.setAttribute("d", path);
+      trail.setAttribute("d", path);
+      length = line.getTotalLength();
+      line.style.strokeDasharray = length;
+      return true;
+    }
+
+    function render(){
+      if (!length) return;
+      var r = wrap.getBoundingClientRect();
+      var vh = window.innerHeight || 800;
+      var y = window.pageYOffset;
+      var docTop = y + r.top;
+
+      /* Work in page coordinates and clamp to what can actually be scrolled:
+         on a tall screen the whole section is visible at rest, so the range
+         has to start at 0 and still span enough scroll to read as a flight. */
+      var maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
+      var from = Math.max(0, docTop - vh * 0.75);
+      var to   = Math.min(maxScroll, docTop + r.height - vh * 0.25);
+      if (to - from < 300) to = Math.min(maxScroll, from + 300);
+      if (to <= from) to = from + 1;
+      var p = Math.max(0, Math.min(1, (y - from) / (to - from)));
+
+      line.style.strokeDashoffset = length * (1 - p);
+      var at = line.getPointAtLength(length * p);
+      var ahead = line.getPointAtLength(Math.min(length, length * p + 1.5));
+      /* the plane artwork points up, so add 90deg to face along the path */
+      var angle = Math.atan2(ahead.y - at.y, ahead.x - at.x) * 180 / Math.PI + 90;
+      plane.setAttribute("transform",
+        "translate(" + at.x + "," + at.y + ") rotate(" + angle + ") scale(" +
+        (stacked ? 1.35 : 1.9) + ")");
+    }
+
+    /* All four stops are the same size: the columns already give them equal
+       widths, so match every card to the tallest one. Re-measured on resize
+       because how the copy wraps changes which card is tallest. */
+    function equalize(){
+      var tallest = 0;
+      cards.forEach(function(c){ if (c) c.style.minHeight = ""; });
+      cards.forEach(function(c){ if (c) tallest = Math.max(tallest, c.offsetHeight); });
+      if (!tallest) return;
+      cards.forEach(function(c){ if (c) c.style.minHeight = tallest + "px"; });
+    }
+
+    function refresh(){ equalize(); if (build()) render(); }
+    return { refresh: refresh, render: render };
+  })();
+
+  if (journey){
+    window.__journey = journey;
+    window.addEventListener("scroll", function(){
+      if (document.querySelector('main.page.active[data-page="services"]')) journey.render();
+    }, {passive:true});
+    window.addEventListener("resize", journey.refresh);
+    journey.refresh();
+  }
+
+  /* FAQ accordion */
+  document.addEventListener("click", function(e){
+    var q = e.target.closest(".faq-q");
+    if (!q) return;
+    q.parentElement.classList.toggle("open");
+  });
+
+  /* ---------------- BLOG PAGE ---------------- */
+  function renderTagRow(){
+    var row = document.getElementById("blog-tag-row");
+    if (!row) return;
+    row.innerHTML = "";
+    TAGS.forEach(function(tag){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tag-pill" + (state.activeTags.has(tag) ? " active" : "");
+      b.textContent = tag;
+      b.addEventListener("click", function(){
+        if (state.activeTags.has(tag)){ state.activeTags.delete(tag); } else { state.activeTags.add(tag); }
+        renderTagRow();
+        renderBlogList();
+      });
+      row.appendChild(b);
+    });
+  }
+
+  function renderBlogList(){
+    var list = document.getElementById("blog-list");
+    if (!list) return;
+    var filtered = BLOG_POSTS.filter(function(p){
+      if (state.activeTags.size === 0) return true;
+      return p.tags.some(function(t){ return state.activeTags.has(t); });
+    });
+    list.innerHTML = "";
+    if (!filtered.length){
+      var empty = document.createElement("div");
+      empty.className = "blog-empty";
+      empty.textContent = "No posts match the selected tags.";
+      list.appendChild(empty);
+      return;
+    }
+    filtered.forEach(function(p){
+      var card = document.createElement("div");
+      card.className = "blog-card";
+      var tagsHtml = p.tags.map(function(t){ return '<span class="tag-pill">' + t + '</span>'; }).join("");
+      card.innerHTML =
+        '<div class="tag-row">' + tagsHtml + '</div>' +
+        '<div class="blog-inner">' +
+          '<div class="txt"><h3>' + p.title + '</h3><h4>' + p.subtitle + '</h4><p>' + p.excerpt + '</p></div>' +
+          '<div class="blog-author">' + svgAvatar() + '<span>' + p.author + '<br>' + p.date + '</span></div>' +
+        '</div>';
+      card.querySelector(".blog-inner").addEventListener("click", function(){ goTo("post", p.slug); });
+      list.appendChild(card);
+    });
+  }
+
+  function renderPost(slug){
+    var post = BLOG_POSTS.find(function(p){ return p.slug === slug; }) || BLOG_POSTS[0];
+    var el = document.getElementById("post-content");
+    if (!el) return;
+    el.innerHTML =
+      '<h1>' + post.title + '</h1>' +
+      '<div class="post-meta">' + post.author + ' · ' + post.date + '</div>' +
+      '<p>' + post.body + '</p>';
+  }
+
+  /* ---------------- DESTINATION PICKER ----------------
+     A filtering combobox rather than a 37-row native select: typing narrows
+     the list, so nobody has to scroll to find Slovenia. Behaves like the
+     header search — arrows move, Enter chooses, Escape closes. */
+  function escHtml(t){
+    return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  (function setupDestinationPickers(){
+    document.querySelectorAll(".dest-field").forEach(function(field){
+      var input    = field.querySelector('input[data-field="country"]');
+      var dropdown = field.querySelector(".dest-dropdown");
+      var toggle   = field.querySelector(".dest-toggle");
+      var active   = -1;
+
+      function options(){ return dropdown.querySelectorAll("button"); }
+
+      function paint(){
+        var opts = options();
+        for (var i = 0; i < opts.length; i++){
+          var on = (i === active);
+          opts[i].classList.toggle("active", on);
+          opts[i].setAttribute("aria-selected", String(on));
+          if (on && opts[i].scrollIntoView){ opts[i].scrollIntoView({block:"nearest"}); }
+        }
+      }
+
+      function close(){
+        dropdown.classList.remove("show");
+        field.classList.remove("open");
+        input.setAttribute("aria-expanded", "false");
+        active = -1;
+      }
+
+      function choose(name){
+        input.value = name;
+        close();
+        showFieldState();
+      }
+
+      /* let the form's own validation re-run after a pick */
+      function showFieldState(){
+        var evt;
+        try { evt = new Event("change", {bubbles:true}); }
+        catch (err) { evt = document.createEvent("Event"); evt.initEvent("change", true, false); }
+        input.dispatchEvent(evt);
+      }
+
+      /* `all` opens the whole list (the chevron); otherwise filter on input */
+      function render(all){
+        var q = input.value.trim().toLowerCase();
+        active = -1;
+        var matches = (all || !q)
+          ? FORM_DESTINATIONS.slice()
+          : FORM_DESTINATIONS.filter(function(n){ return n.toLowerCase().indexOf(q) !== -1; });
+
+        dropdown.innerHTML = "";
+        if (!matches.length){
+          var none = document.createElement("div");
+          none.className = "empty";
+          none.textContent = "No destination matches that";
+          dropdown.appendChild(none);
+        } else {
+          matches.forEach(function(name){
+            var b = document.createElement("button");
+            b.type = "button";
+            b.setAttribute("role", "option");
+            /* bold the part they actually typed */
+            var at = (all || !q) ? -1 : name.toLowerCase().indexOf(q);
+            b.innerHTML = at === -1 ? escHtml(name)
+              : escHtml(name.slice(0, at)) + "<b>" + escHtml(name.slice(at, at + q.length)) +
+                "</b>" + escHtml(name.slice(at + q.length));
+            /* mousedown, not click — the input blurs before a click lands and
+               would flag the half-typed value as invalid on the way out */
+            b.addEventListener("mousedown", function(e){ e.preventDefault(); choose(name); });
+            b.addEventListener("mousemove", function(){
+              active = [].indexOf.call(options(), b); paint();
+            });
+            dropdown.appendChild(b);
+          });
+          /* if the text already names a destination, start on it */
+          if (!all && q){
+            for (var i = 0; i < matches.length; i++){
+              if (matches[i].toLowerCase() === q){ active = i; break; }
+            }
+          }
+        }
+        dropdown.classList.add("show");
+        field.classList.add("open");
+        input.setAttribute("aria-expanded", "true");
+        paint();
+      }
+
+      input.addEventListener("input", function(){ render(false); });
+      input.addEventListener("focus", function(){ render(false); });
+
+      toggle.addEventListener("mousedown", function(e){
+        e.preventDefault();
+        if (dropdown.classList.contains("show")){ close(); }
+        else { input.focus(); render(true); }
+      });
+
+      input.addEventListener("keydown", function(e){
+        var key = e.key;
+        var open = dropdown.classList.contains("show");
+        var opts = options();
+
+        if (key === "ArrowDown" || key === "ArrowUp"){
+          if (!open || !opts.length){ render(false); opts = options(); }
+          if (!opts.length) return;
+          e.preventDefault();
+          if (key === "ArrowDown"){ active = (active + 1) % opts.length; }
+          else { active = (active <= 0 ? opts.length : active) - 1; }
+          paint();
+          return;
+        }
+        if (key === "Enter"){
+          if (open && active > -1 && opts[active]){
+            e.preventDefault();
+            opts[active].dispatchEvent(new MouseEvent("mousedown"));
+          } else if (open && opts.length === 1){
+            e.preventDefault();
+            opts[0].dispatchEvent(new MouseEvent("mousedown"));
+          }
+          return;
+        }
+        if (key === "Escape"){ close(); return; }
+        if (key === "Tab"){ close(); }
+      });
+
+      document.addEventListener("click", function(e){
+        if (!e.target.closest || !e.target.closest(".dest-field")){ close(); }
+      });
+    });
+  })();
+
+  /* ---------------- FORM VALIDATION ---------------- */
+  /* letters, spaces and the apostrophe/hyphen that appear in real names */
+  var RX_NAME  = /^[A-Za-z][A-Za-z\s'\-.]*$/;
+  /* digits count only — +, spaces, hyphens and brackets are allowed as formatting */
+  var RX_PHONE = /^[0-9+\-()\s]+$/;
+  var RX_EMAIL = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+
+  /* Returns "" when the field is good, otherwise the message to show. */
+  function validateField(field, value){
+    var v = value.trim();
+    if (field === "name"){
+      if (!v) return "Name is required.";
+      if (/[0-9]/.test(v)) return "Name cannot contain numbers.";
+      if (!RX_NAME.test(v)) return "Name cannot contain special characters.";
+      return "";
+    }
+    if (field === "contact"){
+      if (!v) return "Contact number is required.";
+      if (!RX_PHONE.test(v)) return "Contact number can only contain digits.";
+      var digits = v.replace(/[^0-9]/g, "");
+      if (digits.length < 7 || digits.length > 15) return "Enter a valid contact number.";
+      return "";
+    }
+    if (field === "email"){
+      if (!v) return "Email ID is required.";
+      if (!RX_EMAIL.test(v)) return "Enter a valid email address.";
+      return "";
+    }
+    if (field === "country"){
+      if (!v) return "Please choose a destination.";
+      /* typed freely, so it has to resolve to something we actually serve */
+      var hit = FORM_DESTINATIONS.filter(function(n){
+        return n.toLowerCase() === v.toLowerCase();
+      });
+      if (!hit.length) return "Pick a destination from the list.";
+      return "";
+    }
+    return "";
+  }
+
+  document.querySelectorAll("[data-consult-form]").forEach(function(form){
+    var fields = ["name", "contact", "email", "country"];
+
+    /* summary banner at the top of the form, created once */
+    var alertEl = document.createElement("div");
+    alertEl.className = "form-alert";
+    alertEl.setAttribute("role", "alert");
+    form.insertBefore(alertEl, form.firstChild);
+
+    function setAlert(msg){
+      alertEl.textContent = msg || "";
+      alertEl.classList.toggle("show", !!msg);
+    }
+
+    function showError(field, msg){
+      var input = form.querySelector('[data-field="' + field + '"]');
+      var errEl = form.querySelector('[data-error="' + field + '"]');
+      if (errEl) errEl.textContent = msg;
+      if (input) input.classList.toggle("invalid", !!msg);
+      return !msg;
+    }
+
+    /* live feedback: flag on leaving a field, and clear again as it is fixed */
+    fields.forEach(function(field){
+      var input = form.querySelector('[data-field="' + field + '"]');
+      if (!input) return;
+      /* the destination field is typed into AND chosen from a list, so it
+         reports on both paths */
+      if (field === "country"){
+        input.addEventListener("change", function(){
+          input.dataset.touched = "1";
+          showError(field, validateField(field, input.value));
+          if (!form.querySelectorAll(".invalid").length){ setAlert(""); }
+        });
+      }
+      input.addEventListener("blur", function(){
+        if (input.value.trim() === "" && !input.dataset.touched) return;
+        input.dataset.touched = "1";
+        showError(field, validateField(field, input.value));
+      });
+      input.addEventListener("input", function(){
+        form.querySelector(".form-success").style.display = "none";
+        if (input.classList.contains("invalid")){
+          showError(field, validateField(field, input.value));
+        }
+        /* drop the summary banner once nothing is flagged any more */
+        if (!form.querySelectorAll(".invalid").length){ setAlert(""); }
+      });
+    });
+
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var ok = true;
+      var firstBad = null;
+      var emptyCount = 0;
+      fields.forEach(function(field){
+        var input = form.querySelector('[data-field="' + field + '"]');
+        input.dataset.touched = "1";
+        if (input.value.trim() === "") emptyCount++;
+        var good = showError(field, validateField(field, input.value));
+        if (!good){ ok = false; if (!firstBad) firstBad = input; }
+      });
+
+      /* accept any casing, but hand on the canonical spelling */
+      var destInput = form.querySelector('[data-field="country"]');
+      if (destInput && destInput.value.trim()){
+        FORM_DESTINATIONS.forEach(function(n){
+          if (n.toLowerCase() === destInput.value.trim().toLowerCase()){ destInput.value = n; }
+        });
+      }
+
+      var successEl = form.querySelector(".form-success");
+      if (ok){
+        successEl.style.display = "block";
+        setAlert("");
+        form.reset();
+        fields.forEach(function(field){
+          var input = form.querySelector('[data-field="' + field + '"]');
+          delete input.dataset.touched;
+          showError(field, "");
+        });
+        setTimeout(function(){ successEl.style.display = "none"; }, 4000);
+      } else {
+        successEl.style.display = "none";
+        setAlert(emptyCount === fields.length
+          ? "Please fill in your details before applying."
+          : "Please check the highlighted fields below.");
+        /* keep focus without yanking the page away from the button they clicked */
+        if (firstBad){
+          try { firstBad.focus({preventScroll:true}); } catch (err) { firstBad.focus(); }
+        }
+      }
+    });
+  });
+
+  /* ---------------- INIT ---------------- */
+  renderHomeCards();
+  renderTestimonials("home-testimonials");
+  renderHomeBlogTeaser();
+  renderTagRow();
+  renderBlogList();
+  renderRoute();
+
+})();
+</script>
+</body>
+</html>
